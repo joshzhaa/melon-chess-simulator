@@ -5,6 +5,7 @@
 #define MELON_MATH_VECTOR_H_
 
 #include <concepts>
+
 namespace melon::math {
 
 // clang-format off

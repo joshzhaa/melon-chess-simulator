@@ -9,4 +9,4 @@ public:
   bool move();
 };
 
-#endif // __PIECE_H__
+#endif  // __PIECE_H__

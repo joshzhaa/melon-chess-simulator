@@ -4,14 +4,14 @@
 
 namespace melon::standard_pieces {
 
-char const * const B = R"(
+char const* const B = R"(
 {
   "moves": [{ "shape": "line", "vector": [[1, 1], [1, -1], [-1, -1], [-1, 1]] }],
   "attacks": [{ "shape": "line", "vector": [[1, 1], [1, -1], [-1, -1], [-1, 1]] }]
 }
 )";
 
-char const * const P = R"(
+char const* const P = R"(
 {
   "moves": [{ "shape": "point", "vector": [[0, 1]] }],
   "attacks": [{ "shape": "point", "vector": [[1, 1], [-1, 1]] }],
@@ -20,7 +20,7 @@ char const * const P = R"(
 }
 )";
 
-char const * const K = R"(
+char const* const K = R"(
 {
   "moves": [{ "shape": "point", "vector": [[0, 1], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1]]}]
   "attacks": [{ "shape": "point", "vector": [[0, 1], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1]]}]
@@ -29,4 +29,4 @@ char const * const K = R"(
 }
 )";
 
-}
+}  // namespace melon::standard_pieces

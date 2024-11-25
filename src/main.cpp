@@ -1,7 +1,8 @@
-#include "melon/piece.hpp"
-#include "melon/standard_pieces.hpp"
 #include <iostream>
 #include <nlohmann/json.hpp>
+
+#include "melon/piece.hpp"
+#include "melon/standard_pieces.hpp"
 
 using json = nlohmann::json;
 

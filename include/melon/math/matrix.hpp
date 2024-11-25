@@ -12,7 +12,7 @@ template <typename T>
 class Matrix {
   std::vector<std::vector<T>> elements;
 
- public:
+public:
   // Using explicit to prevent Matrix<T> m = {1, 2} which looks misleading for a Matrix
   explicit Matrix(std::size_t m, std::size_t n) noexcept : elements{m, std::vector<T>(n, 0)} {}
   explicit Matrix(Matrix&& other) noexcept : elements{std::move(other.elements)} {}
