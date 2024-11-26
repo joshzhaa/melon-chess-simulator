@@ -13,12 +13,15 @@ class Matrix {
   std::vector<std::vector<T>> elements;
 
 public:
-  // Using explicit to prevent Matrix<T> m = {1, 2} which looks misleading for a Matrix
-  explicit Matrix(std::size_t m, std::size_t n) noexcept : elements{m, std::vector<T>(n, 0)} {}
+  /*
+   * passing element by value, because you're about to copy T at least m*n times anyway
+   * using explicit to prevent Matrix<T> m = {1, 2} which looks misleading for a Matrix
+   */
+  explicit Matrix(std::size_t m, std::size_t n, T element = T{}) noexcept : elements{m, std::vector<T>(n, element)} {}
   explicit Matrix(Matrix&& other) noexcept : elements{std::move(other.elements)} {}
 
   T& operator[](std::size_t i, std::size_t j) noexcept { return elements[i][j]; }
-  T& operator[](std::size_t i, std::size_t j) const noexcept { return elements[i][j]; }
+  const T& operator[](std::size_t i, std::size_t j) const noexcept { return elements[i][j]; }
 
   /*
    * returns (m, n)
