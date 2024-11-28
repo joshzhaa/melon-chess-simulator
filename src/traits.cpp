@@ -52,13 +52,13 @@ auto default_traits() -> std::array<melon::Traits, melon::constants::MAX_PIECES>
 
 namespace melon {
 
-auto Traits::db() -> std::array<Traits, constants::MAX_PIECES>& {
+auto Traits::db() noexcept -> std::array<Traits, constants::MAX_PIECES>& {
   static std::array<Traits, constants::MAX_PIECES> loaded_pieces{default_traits()};
   return loaded_pieces;
 }
 
 // TODO: figure out how to construct Traits from json obj
-bool Traits::load_traits(unsigned char id, std::string&& data) {
+bool Traits::load_traits(unsigned char id, std::string&& data) noexcept {
   json obj = json::parse(std::move(data), nullptr, false);
   if (obj.is_discarded()) return false;
   Traits traits;

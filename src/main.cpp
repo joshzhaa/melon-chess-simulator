@@ -1,6 +1,6 @@
 #include <cstddef>
-#include <format>
 #include <iostream>
+#include <string>
 
 #include "melon/game.hpp"
 #include "melon/math/matrix.hpp"
@@ -19,6 +19,7 @@ constexpr std::array WHITE_ICONS = {
   "\u2658",
   "\u2659",
 };
+
 constexpr std::array BLACK_ICONS = {
   "\u265A",
   "\u265B",
@@ -31,9 +32,16 @@ constexpr std::array BLACK_ICONS = {
 std::string icon(const Piece& piece) {
   const auto& icon_set = piece.team() == 1 ? WHITE_ICONS : BLACK_ICONS;
   const auto id = piece.id();
-  if (id == 6) return "\u00b7";  // empty square -> central dot
-  else if (id < icon_set.size()) return icon_set[id];
-  else return "?";  // unrecongized Piece
+  if (id == 6)
+    return "\u00b7";  // empty square -> central dot
+  else if (id < icon_set.size())
+    return icon_set[id];
+  else
+    return "?";  // unrecongized Piece
+}
+
+std::string text(const Piece& piece) {
+  return std::to_string(piece.id()) + ":" + std::to_string(piece.team());
 }
 
 std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) {
@@ -42,7 +50,7 @@ std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) {
   for (std::size_t i = 0; i < m; ++i) {
     for (std::size_t j = 0; j < n; ++j) {
       const auto& piece = board[i, j];
-      result.append(use_icons ? icon(piece) : std::to_string(board[i, j].id()));
+      result.append(use_icons ? icon(piece) : text(piece));
       result.push_back(' ');
     }
     result.back() = '\n';
@@ -54,6 +62,6 @@ std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) {
 
 int main() {
   melon::Game game;
-  std::cout << serialize(game.board(), false);
+  std::cout << serialize(game.board(), true);
   melon::Traits::db();
 }

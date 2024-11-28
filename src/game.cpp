@@ -4,6 +4,7 @@
 #include <iostream>
 
 // parallel arrays describing default chess board configuration
+// these arrays imply an orientation for x y axes
 namespace {
 
 constexpr std::size_t N = 8;
