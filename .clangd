@@ -1,3 +1,3 @@
 CompileFlags:
-  Add: [-xc++, -std=c++23, -Weverything, -Wno-c++98-compat]
+  Add: [-xc++, -std=c++23, -Weverything, -Wno-c++98-compat, -Wno-c++20-compat]
   Compiler: /opt/homebrew/opt/llvm@18/bin/clang++

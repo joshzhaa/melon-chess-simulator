@@ -3,6 +3,7 @@
 #include <format>
 #include <iostream>
 
+// parallel arrays describing default chess board configuration
 namespace {
 
 constexpr std::size_t N = 8;
@@ -34,6 +35,7 @@ constexpr std::array<std::array<unsigned char, N>, N> DEFAULT_TEAMS{{
 namespace melon {
 
 Game::Game() noexcept {
+  // TODO: remove
   std::cout << std::format(
     "Game {}\n"
     "vector<Matrix<Piece>> {}\n"
@@ -43,8 +45,7 @@ Game::Game() noexcept {
     sizeof(select)
   );
 
-  // empty board
-  math::Matrix<Piece> board{N, N, Piece{6, 0}};
+  math::Matrix<Piece> board{N, N, Piece{6, 0}};  // empty board
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       auto piece = DEFAULT_PIECES[i][j];

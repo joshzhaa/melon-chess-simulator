@@ -5,23 +5,19 @@
 
 // clang-format off
 // unsigned char is so much more ergonomic than std::byte
-namespace { using byte = unsigned char; }
+namespace { using byte = unsigned char; }  // TODO: move this into some kind of utility header
 // clang-format on
 
 namespace melon {
 
 /*
- * 0: K
- * 1: Q
- * 2: R
- * 3: B
- * 4: N
- * 5: P
- * 6: Empty
+ * A Piece fundamentally is a pair (id, team), e.g. (Pawn, White).
+ * Piece also tracks whether it has moved or not, for performance reasons (for K, P, R).
+ * Piece's behaviors are stored in Traits, since each id shares the same behaviors
  */
 class Piece {
-  byte id_;     // imposes a max number of distinguishable pieces: 256
-  byte team_;   // imposes a max number of distinguishable teams: 256
+  byte id_;  // imposes a max number of distinguishable pieces, see constants.hpp
+  byte team_;
   bool moved_;  // could be computed but would be inefficient to compute
 
 public:

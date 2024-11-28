@@ -14,10 +14,10 @@ FetchContent_MakeAvailable(json googletest)
 get_target_property(json_include nlohmann_json::nlohmann_json INTERFACE_INCLUDE_DIRECTORIES)
 target_include_directories(nlohmann_json SYSTEM INTERFACE ${json_include})
 
-add_executable(melon_cli src/main.cpp src/piece.cpp src/game.cpp)
+add_executable(melon_cli src/main.cpp src/game.cpp src/piece.cpp src/traits.cpp)
 target_include_directories(melon_cli PUBLIC include)
 target_link_libraries(melon_cli PUBLIC nlohmann_json::nlohmann_json)
-target_compile_options(melon_cli PUBLIC -Weverything -Wno-c++98-compat)
+target_compile_options(melon_cli PUBLIC -Weverything -Wno-c++98-compat -Wno-c++20-compat)
 
 add_executable(test_math test/math.cpp)
 target_link_libraries(test_math GTest::gtest_main)

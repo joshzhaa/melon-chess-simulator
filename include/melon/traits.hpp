@@ -1,23 +1,36 @@
 /*
- * Each piece has "traits" defined in a JSON
+ * Each piece has "Traits" defined in a JSON.
+ * Traits is a simple aggregate struct with some associated static functions for accessing
+ * the global Traits::db() and loading more Traits from JSON
  */
+#ifndef MELON_TRAITS_H_
+#define MELON_TRAITS_H_
+
 #include <array>
+
+#include "constants.hpp"
 
 namespace melon {
 
-constexpr std::size_t MAX_PIECES = sizeof(unsigned char);
-
+// TODO: determine struct layout
 struct Traits {
-
-  explicit Traits() {
-  }
-
-  static auto db() -> const std::array<Traits, MAX_PIECES>& {
-    static std::array<Traits, MAX_PIECES> known_pieces = load_default_traits();
-    return known_pieces;
-  }
-
-  static auto load_default_traits() -> std::array<Traits, MAX_PIECES> {}
+  /*
+   * returns array with traits for every loaded piece defining each one's behavior.
+   * the array is indexed by Piece::id() and returns the corresponding Traits struct.
+   * must not be accessed in dtor of global object (static dtor ordering issues).
+   * initialized on first call of this method with Traits::load_default_traits.
+   * can load more pieces using Traits::load_traits.
+   * the returned reference isn't const because this->load_traits modifies it.
+   */
+  static auto db() -> std::array<Traits, constants::MAX_PIECES>&;  // TODO: fine-grained lazy initialization, is it needed?
+  /*
+   * constructs Traits from data and overwrites Traits::db()[id] with the new Traits.
+   * fallible, returns a bool: true -> load_traits succeeded, false -> load_traits failed
+   * nlohmann::json::parse takes an rvalue reference
+   */
+  static bool load_traits(unsigned char id, std::string&& data);
 };
 
-}
+}  // namespace melon
+
+#endif

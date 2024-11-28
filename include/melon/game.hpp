@@ -19,11 +19,13 @@ class Game {
   std::optional<melon::math::Vector<int>> select;  // null -> no selection ("select mode")
 
 public:
-  // TODO: remove
+  /*
+   * Constructs Game at initial state of standard chess game
+   */
   Game() noexcept;
   auto board() noexcept -> melon::math::Matrix<melon::Piece>& { return boards.back(); }
   auto board() const noexcept -> const melon::math::Matrix<melon::Piece>& { return boards.back(); }
-  char mode() const noexcept { return select ? 'm' : 's'; }
+  char mode() const noexcept { return select ? 'm' : 's'; }  // TODO: make it an enum, what should it be named?
 };
 
 }  // namespace melon
