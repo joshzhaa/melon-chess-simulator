@@ -3,5 +3,8 @@ BasedOnStyle: Google
 DerivePointerAlignment: false
 PointerAlignment: Left
 ColumnLimit: 160
-AccessModifierOffset: -2 
+AccessModifierOffset: -2
+AlignAfterOpenBracket: BlockIndent
+BinPackArguments: false
+ContinuationIndentWidth: 2
 ...

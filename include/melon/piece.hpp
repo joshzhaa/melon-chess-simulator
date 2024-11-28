@@ -1,6 +1,13 @@
 #ifndef MELON_PIECE_H_
 #define MELON_PIECE_H_
 
+#include "melon/math/matrix.hpp"
+
+// clang-format off
+// unsigned char is so much more ergonomic than std::byte
+namespace { using byte = unsigned char; }
+// clang-format on
+
 namespace melon {
 
 /*
@@ -13,13 +20,22 @@ namespace melon {
  * 6: Empty
  */
 class Piece {
-  unsigned char id_;  // imposes a max number of distinguishable pieces: 256
-  bool moved_;        // could be computed but would be inefficient to compute
+  byte id_;     // imposes a max number of distinguishable pieces: 256
+  byte team_;   // imposes a max number of distinguishable teams: 256
+  bool moved_;  // could be computed but would be inefficient to compute
 
 public:
-  explicit Piece(unsigned char id) noexcept;
-  bool move() const noexcept;
-  unsigned char id() const noexcept { return id_; }
+  explicit Piece(byte id, byte team) noexcept : id_{id}, team_{team}, moved_{false} {}
+  byte id() const noexcept { return id_; }
+  byte team() const noexcept { return team_; }
+  bool moved() const noexcept { return moved_; }
+  void move() noexcept { moved_ = true; }
+
+  /*
+   * returns an "attack matrix" (a matrix of same shape as board that highlights allowed moves)
+   * this shows the result of the "moves" and "attacks" fields of the piece json
+   */
+  auto attack(const math::Matrix<Piece>& board) const noexcept -> math::Matrix<bool>;
 };
 
 }  // namespace melon

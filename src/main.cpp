@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -16,14 +17,24 @@ namespace {
  */
 std::string serialize(const melon::math::Matrix<melon::Piece>& board) {
   static std::array icons = {
-      "\u2654", "\u2655", "\u2656", "\u2657", "\u2658", "\u2659",  // white
-      "\u265A", "\u265B", "\u265C", "\u265D", "\u265E", "\u265F",  // black
+    "\u2654",  // white
+    "\u2655",
+    "\u2656",
+    "\u2657",
+    "\u2658",
+    "\u2659",
+    "\u265A",  // black
+    "\u265B",
+    "\u265C",
+    "\u265D",
+    "\u265E",
+    "\u265F",
   };
   auto [m, n] = board.shape();
   std::string result;
 
   for (std::size_t j = 0; j < n; ++j) {
-    result.append("____");
+    result.append(" ___");
   }
   result.push_back('\n');
   for (std::size_t i = 0; i < m; ++i) {
@@ -63,8 +74,9 @@ std::string serialize(const melon::math::Matrix<melon::Piece>& board) {
 }  // namespace
 
 int main() {
-  json bishop = json::parse(melon::standard_pieces::B);
-  std::cout << bishop << '\n';
-  melon::Game game;
-  std::cout << serialize(game.board());
+  // json bishop = json::parse(melon::standard_pieces::B);
+  // std::cout << bishop << '\n';
+  // melon::Game game;
+  // std::cout << serialize(game.board());
+  
 }

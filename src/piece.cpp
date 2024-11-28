@@ -1,15 +1,11 @@
 #include "melon/piece.hpp"
 
-#include <format>
-#include <iostream>
-
 namespace melon {
 
-Piece::Piece(unsigned char id) noexcept : id_(id) { std::cout << std::format("piece id={} created\n", id); }
-
-bool Piece::move() const noexcept {
-  std::cout << "moving!";
-  return true;
+auto Piece::attack(const math::Matrix<Piece>& board) const noexcept -> math::Matrix<bool> {
+  auto [m, n] = board.shape();
+  math::Matrix<bool> attack_matrix{m, n, false};
+  return attack_matrix;
 }
 
 }  // namespace melon

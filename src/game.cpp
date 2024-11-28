@@ -3,28 +3,56 @@
 #include <format>
 #include <iostream>
 
-melon::Game::Game() noexcept {
-  boards.emplace_back(3, 3, melon::Piece('p'));
-  std::cout << std::format(
-      "Game memory layout\n"
-      "vector<Matrix<Piece>> {}\n"
-      "optional<Vector<int>> {}\n",
-      sizeof(boards), sizeof(select));
+namespace {
 
-  melon::math::Matrix<melon::Piece> board{8, 8, melon::Piece(6)};
-  for (std::size_t i = 0; i < 8; ++i) {
-    board[1, i] = melon::Piece(5);
-    board[6, i] = melon::Piece(5);
-  }
-  for (auto i : std::array<std::size_t, 2>{0, 7}) {
-    board[i, 0] = melon::Piece(2);  // R
-    board[i, 1] = melon::Piece(4);  // N
-    board[i, 2] = melon::Piece(3);  // B
-    board[i, 3] = melon::Piece(1);  // Q
-    board[i, 4] = melon::Piece(0);  // K
-    board[i, 5] = melon::Piece(3);  // B
-    board[i, 6] = melon::Piece(4);  // N
-    board[i, 7] = melon::Piece(2);  // R
+constexpr std::size_t N = 8;
+
+constexpr std::array<std::array<unsigned char, N>, N> DEFAULT_PIECES{{
+  {2, 4, 3, 1, 0, 3, 4, 2},
+  {5, 5, 5, 5, 5, 5, 5, 5},
+  {6, 6, 6, 6, 6, 6, 6, 6},
+  {6, 6, 6, 6, 6, 6, 6, 6},
+  {6, 6, 6, 6, 6, 6, 6, 6},
+  {6, 6, 6, 6, 6, 6, 6, 6},
+  {5, 5, 5, 5, 5, 5, 5, 5},
+  {2, 4, 3, 1, 0, 3, 4, 2},
+}};
+
+constexpr std::array<std::array<unsigned char, N>, N> DEFAULT_TEAMS{{
+  {2, 2, 2, 2, 2, 2, 2, 2},
+  {2, 2, 2, 2, 2, 2, 2, 2},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0},
+  {1, 1, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 1, 1},
+}};
+
+}  // namespace
+
+namespace melon {
+
+Game::Game() noexcept {
+  std::cout << std::format(
+    "Game {}\n"
+    "vector<Matrix<Piece>> {}\n"
+    "optional<Vector<int>> {}\n",
+    sizeof(*this),
+    sizeof(boards),
+    sizeof(select)
+  );
+
+  // empty board
+  math::Matrix<Piece> board{N, N, Piece{6, 0}};
+  for (std::size_t i = 0; i < N; ++i) {
+    for (std::size_t j = 0; j < N; ++j) {
+      auto piece = DEFAULT_PIECES[i][j];
+      auto team = DEFAULT_TEAMS[i][j];
+      board[i, j] = Piece{piece, team};
+    }
   }
   boards.push_back(std::move(board));
 }
+
+}  // namespace melon
