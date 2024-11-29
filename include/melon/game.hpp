@@ -3,8 +3,11 @@
 #include "melon/math/matrix.hpp"
 #include "melon/math/vector.hpp"
 #include "melon/piece.hpp"
+#include "melon/util.hpp"
 
 namespace melon {
+
+enum class Mode : byte { SELECT, MOVE };
 
 /*
  * class that defines game state
@@ -15,17 +18,21 @@ namespace melon {
  * first the user selects a piece to move, then chooses a square to move to
  */
 class Game {
-  std::vector<melon::math::Matrix<melon::Piece>> boards;
-  std::optional<melon::math::Vector<int>> select;  // null -> no selection ("select mode")
+  std::vector<math::Matrix<Piece>> boards;  // history of board states
+  math::Matrix<bool> moves;                 // value only meaningful in Mode::MOVE
+  std::optional<math::Vector<int>> select;  // null -> no selection ("select mode")
 
 public:
-  /*
-   * Constructs Game at initial state of standard chess game
-   */
+  // Constructs Game at initial state of standard chess game
   Game() noexcept;
+  // the current board is the last Matrix in boards
   auto board() noexcept -> melon::math::Matrix<melon::Piece>& { return boards.back(); }
   auto board() const noexcept -> const melon::math::Matrix<melon::Piece>& { return boards.back(); }
-  char mode() const noexcept { return select ? 'm' : 's'; }  // TODO: make it an enum, what should it be named?
+  // SELECT -> expecting a piece selection, MOVE -> expecting a move selection
+  Mode mode() const noexcept { return select ? Mode::MOVE : Mode::SELECT; }
+  // highlight squares that the selected piece can move to
+  bool highlight(std::size_t i, std::size_t j) const noexcept { return moves[i, j]; }
+  void touch() noexcept;
 };
 
 }  // namespace melon

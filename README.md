@@ -25,3 +25,9 @@ Team id (unsigned char, max 256):
 
 Each piece has "Traits" defined in a JSON
 A Trait is global for each Piece's id
+
+# Dependencies
+1. clang, cland, clang-format, clang-tidy
+2. CMake
+3. GoogleTest
+4. nlohmann/json

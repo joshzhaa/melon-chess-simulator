@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <format>
 #include <iostream>
 #include <string>
 
@@ -40,9 +41,7 @@ std::string icon(const Piece& piece) {
     return "?";  // unrecongized Piece
 }
 
-std::string text(const Piece& piece) {
-  return std::to_string(piece.id()) + ":" + std::to_string(piece.team());
-}
+std::string text(const Piece& piece) { return std::format("{}:{}", piece.id(), piece.team()); }
 
 std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) {
   auto [m, n] = board.shape();

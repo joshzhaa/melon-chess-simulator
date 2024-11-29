@@ -2,11 +2,7 @@
 #define MELON_PIECE_H_
 
 #include "melon/math/matrix.hpp"
-
-// clang-format off
-// unsigned char is so much more ergonomic than std::byte
-namespace { using byte = unsigned char; }  // TODO: move this into some kind of utility header
-// clang-format on
+#include "melon/util.hpp"
 
 namespace melon {
 
@@ -16,7 +12,7 @@ namespace melon {
  * Piece's behaviors are stored in Traits, since each id shares the same behaviors
  */
 class Piece {
-  byte id_;  // imposes a max number of distinguishable pieces, see constants.hpp
+  byte id_;  // imposes a max number of distinguishable pieces, see constants::MAX_PIECES
   byte team_;
   bool moved_;  // could be computed but would be inefficient to compute
 
@@ -35,5 +31,5 @@ public:
 };
 
 }  // namespace melon
-//
+
 #endif  // MELON_PIECE_H_

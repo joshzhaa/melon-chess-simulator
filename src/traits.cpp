@@ -37,6 +37,8 @@ char const* const K = R"(
 }
 )";
 
+melon::Traits make_traits(const json& json) {}
+
 auto default_traits() -> std::array<melon::Traits, melon::constants::MAX_PIECES> {
   using namespace melon;
   std::array<Traits, constants::MAX_PIECES> traits_array;
@@ -61,8 +63,9 @@ auto Traits::db() noexcept -> std::array<Traits, constants::MAX_PIECES>& {
 bool Traits::load_traits(unsigned char id, std::string&& data) noexcept {
   json obj = json::parse(std::move(data), nullptr, false);
   if (obj.is_discarded()) return false;
+  // potential race condition, doesn't matter for single threaded
   Traits traits;
-  Traits::db()[id] = std::move(traits);  // NRVO doesn't apply so move is probably correct
+  Traits::db()[id] = traits;  // don't move this, b/c aggregate struct
   return true;
 }
 

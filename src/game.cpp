@@ -9,7 +9,7 @@ namespace {
 
 constexpr std::size_t N = 8;
 
-constexpr std::array<std::array<unsigned char, N>, N> DEFAULT_PIECES{{
+constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_PIECES{{
   {2, 4, 3, 1, 0, 3, 4, 2},
   {5, 5, 5, 5, 5, 5, 5, 5},
   {6, 6, 6, 6, 6, 6, 6, 6},
@@ -20,7 +20,7 @@ constexpr std::array<std::array<unsigned char, N>, N> DEFAULT_PIECES{{
   {2, 4, 3, 1, 0, 3, 4, 2},
 }};
 
-constexpr std::array<std::array<unsigned char, N>, N> DEFAULT_TEAMS{{
+constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_TEAMS{{
   {2, 2, 2, 2, 2, 2, 2, 2},
   {2, 2, 2, 2, 2, 2, 2, 2},
   {0, 0, 0, 0, 0, 0, 0, 0},
@@ -35,15 +35,17 @@ constexpr std::array<std::array<unsigned char, N>, N> DEFAULT_TEAMS{{
 
 namespace melon {
 
-Game::Game() noexcept {
+Game::Game() noexcept : moves{N, N} {
   // TODO: remove
   std::cout << std::format(
     "Game {}\n"
     "vector<Matrix<Piece>> {}\n"
-    "optional<Vector<int>> {}\n",
+    "optional<Vector<int>> {}\n"
+    "math::Matrix<bool> {}\n",
     sizeof(*this),
     sizeof(boards),
-    sizeof(select)
+    sizeof(select),
+    sizeof(moves)
   );
 
   math::Matrix<Piece> board{N, N, Piece{6, 0}};  // empty board
