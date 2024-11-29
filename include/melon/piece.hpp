@@ -6,6 +6,8 @@
 
 namespace melon {
 
+constexpr byte EMPTY_ID = 6;
+
 /*
  * A Piece fundamentally is a pair (id, team), e.g. (Pawn, White).
  * Piece also tracks whether it has moved or not, for performance reasons (for K, P, R).
@@ -14,10 +16,10 @@ namespace melon {
 class Piece {
   byte id_;  // imposes a max number of distinguishable pieces, see constants::MAX_PIECES
   byte team_;
-  bool moved_;  // could be computed but would be inefficient to compute
+  bool moved_{false};  // could be computed but would be inefficient to compute
 
 public:
-  explicit Piece(byte id, byte team) noexcept : id_{id}, team_{team}, moved_{false} {}
+  explicit Piece(byte id, byte team) noexcept : id_{id}, team_{team} {}
   byte id() const noexcept { return id_; }
   byte team() const noexcept { return team_; }
   bool moved() const noexcept { return moved_; }

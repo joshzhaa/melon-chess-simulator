@@ -1,3 +1,4 @@
+#include <array>
 #include <cstddef>
 #include <format>
 #include <iostream>
@@ -33,12 +34,11 @@ constexpr std::array BLACK_ICONS = {
 std::string icon(const Piece& piece) {
   const auto& icon_set = piece.team() == 1 ? WHITE_ICONS : BLACK_ICONS;
   const auto id = piece.id();
-  if (id == 6)
+  if (id == EMPTY_ID)
     return "\u00b7";  // empty square -> central dot
-  else if (id < icon_set.size())
+  if (id < icon_set.size())
     return icon_set[id];
-  else
-    return "?";  // unrecongized Piece
+  return "?";  // unrecongized Piece
 }
 
 std::string text(const Piece& piece) { return std::format("{}:{}", piece.id(), piece.team()); }

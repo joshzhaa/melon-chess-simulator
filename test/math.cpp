@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <cstddef>
 #include <functional>
 #include <tuple>
 
@@ -9,12 +10,13 @@
 using namespace melon::math;
 
 TEST(Math, Basic) {
-  Vector<int> u{1, 2};
-  Vector<int> v{2, 3};
-  Vector<int> result{3, 5};
+  Vector<int> const u{1, 2};
+  Vector<int> const v{2, 3};
+  Vector<int> const result{3, 5};
   EXPECT_EQ(u + v, result);
 
-  std::size_t m = 4, n = 5;
+  const std::size_t m = 4;
+  const std::size_t n = 5;
   Matrix<int> matrix{m, n};
 
   for (std::size_t i = 0; i < m; ++i) {
@@ -28,13 +30,13 @@ TEST(Math, Basic) {
 }
 
 TEST(Math, Edge) {
-  Matrix<int> matrix{0, 0};
+  Matrix<int> const matrix{0, 0};
   EXPECT_EQ(matrix.shape(), (std::tuple<int, int>{0, 0}));
 }
 
 TEST(Math, Elementwise) {
-  unsigned m = 4;
-  unsigned n = 4;
+  unsigned const m = 4;
+  unsigned const n = 4;
   Matrix<unsigned> a{m, n};
   Matrix<unsigned> b{m, n};
   for (unsigned i = 0; i < m; ++i) {
@@ -46,7 +48,7 @@ TEST(Math, Elementwise) {
   EXPECT_EQ(a, a);
   EXPECT_EQ(b, b);
 
-  auto sum = elementwise(a, b, std::plus<unsigned>());
+  auto sum = elementwise(a, b, std::plus<>{});
   // expect compile error
   // from concept
   // auto result = elementwise(a, b, [](unsigned i, unsigned j) { return 1.0 });

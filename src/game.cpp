@@ -1,7 +1,14 @@
 #include "melon/game.hpp"
 
+#include <array>
+#include <cstddef>
 #include <format>
 #include <iostream>
+#include <utility>
+
+#include "melon/math/matrix.hpp"
+#include "melon/piece.hpp"
+#include "melon/util.hpp"
 
 // parallel arrays describing default chess board configuration
 // these arrays imply an orientation for x y axes
@@ -36,19 +43,7 @@ constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_TEAMS{{
 namespace melon {
 
 Game::Game() noexcept : moves{N, N} {
-  // TODO: remove
-  std::cout << std::format(
-    "Game {}\n"
-    "vector<Matrix<Piece>> {}\n"
-    "optional<Vector<int>> {}\n"
-    "math::Matrix<bool> {}\n",
-    sizeof(*this),
-    sizeof(boards),
-    sizeof(select),
-    sizeof(moves)
-  );
-
-  math::Matrix<Piece> board{N, N, Piece{6, 0}};  // empty board
+  math::Matrix<Piece> board{N, N, Piece{EMPTY_ID, 0}};  // empty board
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       auto piece = DEFAULT_PIECES[i][j];

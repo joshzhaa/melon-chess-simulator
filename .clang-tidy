@@ -1,4 +1,4 @@
 ---
-Checks: '*,-llvmlibc*,-modernize-use-trailing-return-type,'
+Checks: '*,-llvmlibc*,-modernize-use-trailing-return-type,-fuchsia-trailing-return,-fuchsia-default-arguments-calls,-fuchsia-default-arguments-declarations,-readability-identifier-length,-altera-unroll-loops,-hicpp-braces-around-statements,-readability-braces-around-statements,-google-readability-braces-around-statements,-google-build-using-namespace,-google-readability-todo,-cppcoreguidelines-pro-bounds-constant-array-index'
 ...
 
