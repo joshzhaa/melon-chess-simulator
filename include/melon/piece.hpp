@@ -6,8 +6,6 @@
 
 namespace melon {
 
-constexpr byte EMPTY_ID = 6;
-
 /*
  * A Piece fundamentally is a pair (id, team), e.g. (Pawn, White).
  * Piece also tracks whether it has moved or not, for performance reasons (for K, P, R).
@@ -20,16 +18,16 @@ class Piece {
 
 public:
   explicit Piece(byte id, byte team) noexcept : id_{id}, team_{team} {}
-  byte id() const noexcept { return id_; }
-  byte team() const noexcept { return team_; }
-  bool moved() const noexcept { return moved_; }
+  [[nodiscard]] byte id() const noexcept { return id_; }
+  [[nodiscard]] byte team() const noexcept { return team_; }
+  [[nodiscard]] bool moved() const noexcept { return moved_; }
   void move() noexcept { moved_ = true; }
 
   /*
    * returns an "attack matrix" (a matrix of same shape as board that highlights allowed moves)
    * this shows the result of the "moves" and "attacks" fields of the piece json
    */
-  auto attack(const math::Matrix<Piece>& board) const noexcept -> math::Matrix<bool>;
+  [[nodiscard]] auto attack(const math::Matrix<Piece>& board) const noexcept -> math::Matrix<bool>;
 };
 
 }  // namespace melon

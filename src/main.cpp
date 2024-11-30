@@ -34,10 +34,8 @@ constexpr std::array BLACK_ICONS = {
 std::string icon(const Piece& piece) {
   const auto& icon_set = piece.team() == 1 ? WHITE_ICONS : BLACK_ICONS;
   const auto id = piece.id();
-  if (id == EMPTY_ID)
-    return "\u00b7";  // empty square -> central dot
-  if (id < icon_set.size())
-    return icon_set[id];
+  if (id == 0) return "\u00b7";  // empty square -> central dot
+  if (id <= icon_set.size()) return icon_set[id - 1];
   return "?";  // unrecongized Piece
 }
 
@@ -61,6 +59,6 @@ std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) {
 
 int main() {
   melon::Game game;
-  std::cout << serialize(game.board(), true);
+  std::cout << serialize(game.board(), false);
   melon::Traits::db();
 }

@@ -5,7 +5,6 @@
 #define MELON_MATH_MATRIX_H_
 
 #include <cassert>
-#include <concepts>
 #include <functional>
 #include <vector>
 
@@ -21,22 +20,20 @@ public:
    * using explicit to prevent Matrix<T> m = {1, 2} which looks misleading for a Matrix
    */
   explicit Matrix(std::size_t m, std::size_t n, T element = T{}) noexcept : elements{m, std::vector<T>(n, element)} {}
-  Matrix(const Matrix& other) noexcept = default;
-  Matrix(Matrix&& other) noexcept : elements{std::move(other.elements)} {}
 
-  T& operator[](std::size_t i, std::size_t j) noexcept { return elements[i][j]; }
-  // TODO: clang-tidy claims returning const T& here is returning a reference to a temporary. How?
-  const T& operator[](std::size_t i, std::size_t j) const noexcept { return elements[i][j]; }
+  // apparently vector<bool> causes this operator to return a reference to a temporary
+  [[nodiscard]] T& operator[](std::size_t i, std::size_t j) noexcept { return elements[i][j]; }
+  [[nodiscard]] const T& operator[](std::size_t i, std::size_t j) const noexcept { return elements[i][j]; }
 
   /*
    * returns (m, n)
    */
-  auto shape() const noexcept -> std::tuple<std::size_t, std::size_t> {
+  [[nodiscard]] auto shape() const noexcept -> std::tuple<std::size_t, std::size_t> {
     if (elements.empty()) return {0, 0};  // prevents UB on the next line
     return {elements.size(), elements[0].size()};
   }
 
-  bool operator==(const Matrix& other) const {
+  [[nodiscard]] bool operator==(const Matrix& other) const {
     if (this->shape() != other.shape()) return false;
     auto [m, n] = this->shape();
     for (std::size_t i = 0; i < m; ++i) {
@@ -57,10 +54,9 @@ concept BinaryOp = requires(Fn f, T a, T b) {
   { std::invoke(f, a, b) } -> std::same_as<T>;
 };
 
-// potential UB if left and right are different shape
 template <typename T, BinaryOp<T> Fn>
 Matrix<T> elementwise(const Matrix<T>& left, const Matrix<T> right, Fn f) {
-  assert(left.shape() == right.shape());
+  assert(left.shape() == right.shape()); // potential UB if left and right are different shape
   auto [m, n] = left.shape();
   Matrix<T> result{m, n};
   for (std::size_t i = 0; i < m; ++i) {

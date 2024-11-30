@@ -10,16 +10,16 @@ No C++ exceptions (emscripten limitation)
 
 # Design Notes
 Piece id (unsigned char, max 256):
- * 0: K
- * 1: Q
- * 2: R
- * 3: B
- * 4: N
- * 5: P
- * 6: Empty
+ * 0: Empty
+ * 1: K
+ * 2: Q
+ * 3: R
+ * 4: B
+ * 5: N
+ * 6: P
 
 Team id (unsigned char, max 256):
- * 0: No one owns Empty Piece
+ * 0: No one (owns Empty Piece)
  * 1: white
  * 2: black
 
@@ -27,7 +27,7 @@ Each piece has "Traits" defined in a JSON
 A Trait is global for each Piece's id
 
 # Dependencies
-1. clang, cland, clang-format, clang-tidy
+1. clang (dev: clangd, clang-format, clang-tidy)
 2. CMake
-3. GoogleTest
-4. nlohmann/json
+3. nlohmann/json
+4. GoogleTest

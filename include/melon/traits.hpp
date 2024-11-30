@@ -22,14 +22,14 @@ struct Traits {
    * can load more pieces using Traits::load_traits.
    * the returned reference isn't const because this->load_traits modifies it.
    */
-  static auto db() noexcept -> std::array<Traits, constants::MAX_PIECES>&;  // TODO: fine-grained lazy initialization, is it needed?
+  [[nodiscard]] static auto db() noexcept -> std::array<Traits, constants::MAX_PIECES>&;  // TODO: fine-grained lazy initialization, is it needed?
   //
   /*
    * constructs Traits from data and overwrites Traits::db()[id] with the new Traits.
    * fallible, returns a bool: true -> load_traits succeeded, false -> load_traits failed
    * nlohmann::json::parse takes an rvalue reference
    */
-  static bool load_traits(unsigned char id, std::string&& data) noexcept;
+  [[nodiscard]] static bool load_traits(unsigned char id, std::string&& data) noexcept;
 };
 
 }  // namespace melon

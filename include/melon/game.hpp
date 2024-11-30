@@ -19,19 +19,19 @@ enum class Mode : byte { SELECT, MOVE };
  */
 class Game {
   std::vector<math::Matrix<Piece>> boards;  // history of board states
-  math::Matrix<bool> moves;                 // value only meaningful in Mode::MOVE
+  math::Matrix<byte> moves;                 // value only meaningful in Mode::MOVE, byte to avoid vector<bool>
   std::optional<math::Vector<int>> select;  // null -> no selection ("select mode")
 
 public:
   // Constructs Game at initial state of standard chess game
   Game() noexcept;
   // the current board is the last Matrix in boards
-  auto board() noexcept -> melon::math::Matrix<melon::Piece>& { return boards.back(); }
-  auto board() const noexcept -> const melon::math::Matrix<melon::Piece>& { return boards.back(); }
+  [[nodiscard]] auto board() noexcept -> melon::math::Matrix<melon::Piece>& { return boards.back(); }
+  [[nodiscard]] auto board() const noexcept -> const melon::math::Matrix<melon::Piece>& { return boards.back(); }
   // SELECT -> expecting a piece selection, MOVE -> expecting a move selection
-  Mode mode() const noexcept { return select ? Mode::MOVE : Mode::SELECT; }
+  [[nodiscard]] Mode mode() const noexcept { return select ? Mode::MOVE : Mode::SELECT; }
   // highlight squares that the selected piece can move to
-  bool highlight(std::size_t i, std::size_t j) const noexcept { return moves[i, j]; }
+  [[nodiscard]] bool highlight(std::size_t i, std::size_t j) const noexcept { return static_cast<bool>(moves[i, j]); }
   void touch() noexcept;
 };
 
