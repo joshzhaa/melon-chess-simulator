@@ -56,7 +56,7 @@ concept BinaryOp = requires(Fn f, T a, T b) {
 
 template <typename T, BinaryOp<T> Fn>
 Matrix<T> elementwise(const Matrix<T>& left, const Matrix<T> right, Fn f) {
-  assert(left.shape() == right.shape()); // potential UB if left and right are different shape
+  assert(left.shape() == right.shape());  // potential UB if left and right are different shape
   auto [m, n] = left.shape();
   Matrix<T> result{m, n};
   for (std::size_t i = 0; i < m; ++i) {

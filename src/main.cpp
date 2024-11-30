@@ -11,7 +11,8 @@
 
 namespace {
 
-using namespace melon;
+using melon::Piece;
+using melon::math::Matrix;
 
 constexpr std::array WHITE_ICONS = {
   "\u2654",
@@ -41,7 +42,7 @@ std::string icon(const Piece& piece) {
 
 std::string text(const Piece& piece) { return std::format("{}:{}", piece.id(), piece.team()); }
 
-std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) {
+std::string serialize(const Matrix<Piece>& board, bool use_icons = true) {
   auto [m, n] = board.shape();
   std::string result;
   for (std::size_t i = 0; i < m; ++i) {

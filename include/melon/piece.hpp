@@ -2,6 +2,7 @@
 #define MELON_PIECE_H_
 
 #include "melon/math/matrix.hpp"
+#include "melon/math/vector.hpp"
 #include "melon/util.hpp"
 
 namespace melon {
@@ -23,11 +24,8 @@ public:
   [[nodiscard]] bool moved() const noexcept { return moved_; }
   void move() noexcept { moved_ = true; }
 
-  /*
-   * returns an "attack matrix" (a matrix of same shape as board that highlights allowed moves)
-   * this shows the result of the "moves" and "attacks" fields of the piece json
-   */
-  [[nodiscard]] auto attack(const math::Matrix<Piece>& board) const noexcept -> math::Matrix<bool>;
+  [[nodiscard]] auto move_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept -> math::Matrix<byte>;                                            
+  [[nodiscard]] auto attack_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept -> math::Matrix<byte>;
 };
 
 }  // namespace melon

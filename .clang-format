@@ -2,9 +2,12 @@
 BasedOnStyle: Google 
 DerivePointerAlignment: false
 PointerAlignment: Left
-ColumnLimit: 160
+ColumnLimit: 150
 AccessModifierOffset: -2
-AlignAfterOpenBracket: BlockIndent
-BinPackArguments: false
 ContinuationIndentWidth: 2
+AlignAfterOpenBracket: BlockIndent
+BinPackArguments: false 
+BinPackParameters: false
+ExperimentalAutoDetectBinPacking: false
+AllowAllParametersOfDeclarationOnNextLine: false
 ...

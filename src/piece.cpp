@@ -5,9 +5,11 @@
 
 namespace melon {
 
-auto Piece::attack(const math::Matrix<Piece>& board) const noexcept -> math::Matrix<bool> {
+auto Piece::move_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept -> math::Matrix<byte> {}
+
+auto Piece::attack_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept -> math::Matrix<byte> {
   auto [m, n] = board.shape();
-  math::Matrix<bool> attack_matrix{m, n, false};
+  math::Matrix<byte> attack_matrix{m, n, 0};
   const auto& traits = Traits::db()[id()];
   return attack_matrix;
 }

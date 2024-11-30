@@ -49,8 +49,7 @@ TEST(Math, Elementwise) {
   EXPECT_EQ(b, b);
 
   auto sum = elementwise(a, b, std::plus<>{});
-  // expect compile error
-  // from concept
+  // expect compile error from concept
   // auto result = elementwise(a, b, [](unsigned i, unsigned j) { return 1.0 });
   for (unsigned i = 0; i < m; ++i) {
     for (unsigned j = 0; j < n; ++j) {
