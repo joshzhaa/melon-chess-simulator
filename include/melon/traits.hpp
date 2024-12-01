@@ -14,11 +14,9 @@
 
 namespace melon {
 
-enum class Action : byte { EN_PASSANT, CASTLE, DOUBLE_STEP };
-
-enum class Effect : byte { EN_PASSANT, CASTLE, PROMOTION, CHECK, CHECKMATE };
-
-enum class Shape : byte { POINT, RAY };
+enum class Action : byte { EN_PASSANT = 0, CASTLE = 1, DOUBLE_STEP = 2 };
+enum class Effect : byte { EN_PASSANT = 0, CASTLE = 1, PROMOTION = 2, CHECK = 3, CHECKMATE = 4 };
+enum class Shape : byte { POINT = 0, RAY = 1 };
 
 /*
  * a Geometry is several shapes overlaid on top of one another
@@ -30,14 +28,48 @@ class Geometry {
   std::vector<math::Vector<int>> orientations;
 
 public:
+  Geometry() = default;
+  Geometry(std::vector<Shape>&& shapes_, std::vector<math::Vector<int>>&& orientations_)
+      : shapes(std::move(shapes_)), orientations(std::move(orientations_)) {}
   /*
-   * Returns a "mask" where Matrix.shape() == shape that describes this Geometry
+   * Returns a "mask" Matrix (Matrix.shape() == shape) that describes this Geometry
    * shapes are applied in their corresponding orientations, overlaid on top of one another
    * basically, shape[0] || shape[1] || ... elementwise
    */
   [[nodiscard]] auto mask(math::Vector<int> origin, std::tuple<std::size_t, std::size_t> shape) const noexcept -> math::Matrix<byte>;
-  [[nodiscard]] std::string serialize() const noexcept;
-  [[nodiscard]] static Geometry deserialize() noexcept;
+  /*
+   * Returns number of overlaid shapes in this Geometry
+   */
+  [[nodiscard]] std::size_t size() const noexcept { return shapes.size(); }
+
+  class Iterator {
+    std::size_t index;
+    // TODO: possible without pointers?
+    std::vector<Shape> const* shapes;
+    std::vector<math::Vector<int>> const* orientations;
+
+  public:
+    Iterator(std::size_t initial_index, std::vector<Shape> const* shapes_ref, std::vector<math::Vector<int>> const* orientations_ref)
+        : index{initial_index}, shapes{shapes_ref}, orientations{orientations_ref} {}
+
+    auto operator*() const noexcept -> std::tuple<Shape, math::Vector<int>> {
+      auto shape = (*shapes)[index];
+      auto orientation = (*orientations)[index];
+      return {shape, orientation};
+    }
+
+    Iterator operator++() noexcept {
+      ++index;
+      return *this;
+    }
+
+    bool operator!=(const Iterator& other) const noexcept {
+      return index != other.index || shapes != other.shapes || orientations != other.orientations;
+    }
+  };
+
+  [[nodiscard]] Iterator begin() const noexcept { return {0, &shapes, &orientations}; }
+  [[nodiscard]] Iterator end() const noexcept { return {size(), &shapes, &orientations}; }
 };
 
 /*
@@ -56,13 +88,13 @@ struct Traits {
    * the returned reference isn't const because Traits::load_traits needs to modify it.
    */
   [[nodiscard]] static auto db() noexcept -> std::array<Traits, constants::MAX_PIECES>&;  // TODO: fine-grained lazy initialization, is it needed?
-  
+
   /*
    * constructs Traits from data and overwrites Traits::db()[id] with the new Traits.
-   * fallible, returns a bool: true -> load_traits succeeded, false -> load_traits failed 
-   * nlohmann::json::parse takes an rvalue reference
+   * fallible, returns a bool: true -> load_traits succeeded, false -> load_traits failed
+   * forced move b/c nlohmann::json::parse takes an rvalue reference
    */
-  [[nodiscard]] static bool load_traits(unsigned char id, std::string&& data) noexcept;
+  [[nodiscard]] static bool load_traits(std::string&& data) noexcept;
 };
 
 }  // namespace melon

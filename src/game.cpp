@@ -21,8 +21,8 @@ constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_PIECES{{
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0},
-  {3, 5, 4, 2, 1, 4, 5, 3},
   {6, 6, 6, 6, 6, 6, 6, 6},
+  {3, 5, 4, 2, 1, 4, 5, 3},
 }};
 
 constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_TEAMS{{

@@ -24,7 +24,7 @@ public:
   [[nodiscard]] bool moved() const noexcept { return moved_; }
   void move() noexcept { moved_ = true; }
 
-  [[nodiscard]] auto move_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept -> math::Matrix<byte>;                                            
+  [[nodiscard]] auto move_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept -> math::Matrix<byte>;
   [[nodiscard]] auto attack_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept -> math::Matrix<byte>;
 };
 

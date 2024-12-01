@@ -1,6 +1,7 @@
 #include "melon/piece.hpp"
 
 #include "melon/math/matrix.hpp"
+#include "melon/math/vector.hpp"
 #include "melon/traits.hpp"
 
 namespace melon {
