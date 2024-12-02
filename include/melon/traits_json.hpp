@@ -6,7 +6,6 @@
 #define MELON_TRAITS_JSON_HPP_
 
 #include <nlohmann/json.hpp>
-#include <iostream>
 
 #include "traits.hpp"
 
@@ -50,26 +49,23 @@ inline void to_json(json& json, const std::tuple<Shape, math::Vector<int>>& pair
   };
 }
 
-inline void from_json(const json& json, std::tuple<Shape, math::Vector<int>>& pair) {
-  pair = {json["shape"], {json["orientation"][0], json["orientation"][1]}};
-}
-
 inline void to_json(json& json, const Geometry& geometry) {
   std::vector<std::tuple<Shape, math::Vector<int>>> list;
   for (const auto [shape, orientation] : geometry) list.emplace_back(shape, orientation);
   json = list;
 }
 
-// TODO: this function has no way to indicate a failure, but user json is fallible
 inline void from_json(const json& json, Geometry& geometry) {
+  geometry = Geometry{};
   std::vector<Shape> shapes;
   std::vector<math::Vector<int>> orientations;
-  for (const auto& pair : json) {
-    std::cout << pair << '\n';
-    // shapes.push_back(shape);
-    // orientations.push_back(orientation);
+  for (const auto& obj : json) {
+    if (not obj.contains("shape")) return;
+    shapes.push_back(obj["shape"]);
+    if (not obj.contains("orientation") or obj["orientation"].size() != 2) return;
+    orientations.emplace_back(obj["orientation"][0], obj["orientation"][1]);
   }
-  geometry = Geometry{std::move(shapes), std::move(orientations)};
+  geometry = Geometry::make_geometry(std::move(shapes), std::move(orientations));
 }
 
 inline void to_json(json& json, const Traits& traits) {

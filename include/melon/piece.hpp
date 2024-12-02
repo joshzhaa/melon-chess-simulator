@@ -1,6 +1,9 @@
 #ifndef MELON_PIECE_H_
 #define MELON_PIECE_H_
 
+#include <expected>
+#include <string_view>
+
 #include "melon/math/matrix.hpp"
 #include "melon/math/vector.hpp"
 #include "melon/util.hpp"
@@ -24,8 +27,10 @@ public:
   [[nodiscard]] bool moved() const noexcept { return moved_; }
   void move() noexcept { moved_ = true; }
 
-  [[nodiscard]] auto move_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept -> math::Matrix<byte>;
-  [[nodiscard]] auto attack_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept -> math::Matrix<byte>;
+  [[nodiscard]] auto move_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept
+    -> std::expected<math::Matrix<byte>, std::string_view>;
+  [[nodiscard]] auto attack_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept
+    -> std::expected<math::Matrix<byte>, std::string_view>;
 };
 
 }  // namespace melon

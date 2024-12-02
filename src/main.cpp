@@ -2,23 +2,19 @@
 #include <cstddef>
 #include <format>
 #include <iostream>
-#include <nlohmann/json_fwd.hpp>
+#include <nlohmann/json.hpp>
 #include <string>
-#include <string_view>
-#include <vector>
 
 #include "melon/constants.hpp"
 #include "melon/game.hpp"
 #include "melon/math/matrix.hpp"
-#include "melon/math/vector.hpp"
 #include "melon/piece.hpp"
 #include "melon/traits.hpp"
 #include "melon/traits_json.hpp"
 
 namespace {
 
-using melon::Piece;
-using melon::math::Matrix;
+using namespace melon;
 
 constexpr std::array WHITE_ICONS = {
   "\u2654",
@@ -48,12 +44,12 @@ std::string icon(const Piece& piece) {
 
 std::string text(const Piece& piece) { return std::format("{}:{}", piece.id(), piece.team()); }
 
-std::string serialize(const Matrix<Piece>& board, bool use_icons = true) {
+std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) {
   auto [m, n] = board.shape();
   std::string result;
-  for (std::size_t i = 0; i < m; ++i) {
+  for (std::size_t i = m; i > 0; --i) {  // i is unsigned -> can't be < 0
     for (std::size_t j = 0; j < n; ++j) {
-      const auto& piece = board[i, j];
+      const auto& piece = board[i - 1, j];
       result.append(use_icons ? icon(piece) : text(piece));
       result.push_back(' ');
     }
@@ -62,38 +58,15 @@ std::string serialize(const Matrix<Piece>& board, bool use_icons = true) {
   return result;
 }
 
-melon::Traits make_bishop() {
-  using melon::Shape, melon::Geometry, melon::Traits, melon::math::Vector;
-
-  std::vector<Vector<int>> orientations = {
-    {1, 1},
-    {1, -1},
-    {-1, -1},
-    {-1, 1},
-  };
-  std::vector<Shape> shapes(orientations.size(), Shape::RAY);
-  Geometry geometry{std::move(shapes), std::move(orientations)};
-  return Traits{
-    geometry,
-    geometry,
-    {},
-    {}
-  };
-}
-
 }  // namespace
 
 int main() {
-  using melon::Game, melon::Traits, melon::byte;
-
   Game game;
-  std::cout << sizeof(std::string_view) << '\n';
   std::cout << serialize(game.board(), true);
-  
-  int i = 0;
-  for (std::size_t piece_id = 0; piece_id <= melon::constants::STANDARD_TRAITS.size(); ++piece_id) {
-    std::cout << i << '\n';
+
+  for (std::size_t piece_id = 0; piece_id < constants::STANDARD_TRAITS.size(); ++piece_id) {
+    std::cout << std::format("piece_id={}", piece_id) << '\n';
     json json = Traits::db()[piece_id];
-    std::cout << json.dump(2) << '\n';
+    std::cout << json << '\n';
   }
 }

@@ -13,14 +13,14 @@ using json = nlohmann::json;  // NOLINT(misc-include-cleaner)
 
 namespace {
 
-auto default_traits() noexcept -> std::array<melon::Traits, melon::constants::MAX_PIECES> {
-  using melon::Traits, melon::constants::MAX_PIECES, melon::constants::STANDARD_TRAITS;
+using namespace melon;
+using namespace std::literals;
 
-  std::array<Traits, MAX_PIECES> traits{};  // force default initialization for whole array
-  for (std::size_t piece_id = 0; piece_id < STANDARD_TRAITS.size(); ++piece_id) {
-    std::cout << piece_id << '\n';
-    const json obj = json::parse(STANDARD_TRAITS[piece_id], nullptr, false);
-    assert(not obj.is_discarded());  // assert failure can only be due to programmer error
+auto default_traits() noexcept -> std::array<Traits, constants::MAX_PIECES> {
+  std::array<Traits, constants::MAX_PIECES> traits{};  // force default initialization for whole array
+  for (std::size_t piece_id = 0; piece_id < constants::STANDARD_TRAITS.size(); ++piece_id) {
+    const json obj = json::parse(constants::STANDARD_TRAITS[piece_id], nullptr, false);
+    assert(not obj.is_discarded());  // for STANDARD_TRAITS, assert failure can only be due to programmer error
     traits[piece_id] = obj;
   }
   return traits;
@@ -35,12 +35,11 @@ auto Traits::db() noexcept -> std::array<Traits, constants::MAX_PIECES>& {
   return loaded_pieces;
 }
 
-bool Traits::load_traits(std::string&& data) noexcept {
+bool Traits::load_traits(byte id, std::string&& data) noexcept {
   const json obj = json::parse(std::move(data), nullptr, false);
   if (obj.is_discarded()) return false;
-  if (not obj.contains("id")) return false;
   // potential race condition, doesn't matter for single threaded
-  db()[obj["id"]] = obj;
+  db()[id] = obj;
   return true;
 }
 

@@ -5,6 +5,7 @@
 #define MELON_TRAITS_H_
 
 #include <array>
+#include <expected>
 #include <vector>
 
 #include "constants.hpp"
@@ -24,52 +25,43 @@ enum class Shape : byte { POINT = 0, RAY = 1 };
  * parallel arrays (struct of arrays) -> invariant: shapes.size() == orientations.size()
  */
 class Geometry {
-  std::vector<Shape> shapes;
-  std::vector<math::Vector<int>> orientations;
+  std::vector<Shape> shapes_;
+  std::vector<math::Vector<int>> orientations_;
 
 public:
-  Geometry() = default;
-  Geometry(std::vector<Shape>&& shapes_, std::vector<math::Vector<int>>&& orientations_)
-      : shapes(std::move(shapes_)), orientations(std::move(orientations_)) {}
-  /*
-   * Returns a "mask" Matrix (Matrix.shape() == shape) that describes this Geometry
-   * shapes are applied in their corresponding orientations, overlaid on top of one another
-   * basically, shape[0] || shape[1] || ... elementwise
-   */
-  [[nodiscard]] auto mask(math::Vector<int> origin, std::tuple<std::size_t, std::size_t> shape) const noexcept -> math::Matrix<byte>;
+  // factory func, to avoid defining a ctor -> needing to explicitly default ctor
+  [[nodiscard]] static Geometry make_geometry(std::vector<Shape>&& shapes, std::vector<math::Vector<int>>&& orientations) {
+    Geometry result{};
+    result.shapes_ = std::move(shapes);
+    result.orientations_ = std::move(orientations);
+    return result;
+  }
   /*
    * Returns number of overlaid shapes in this Geometry
    */
-  [[nodiscard]] std::size_t size() const noexcept { return shapes.size(); }
+  [[nodiscard]] std::size_t size() const noexcept { return shapes_.size(); }
 
   class Iterator {
-    std::size_t index;
-    // TODO: possible without pointers?
-    std::vector<Shape> const* shapes;
-    std::vector<math::Vector<int>> const* orientations;
+    std::vector<Shape>::const_iterator shape_;
+    std::vector<math::Vector<int>>::const_iterator orientation_;
 
   public:
-    Iterator(std::size_t initial_index, std::vector<Shape> const* shapes_ref, std::vector<math::Vector<int>> const* orientations_ref)
-        : index{initial_index}, shapes{shapes_ref}, orientations{orientations_ref} {}
+    Iterator(std::vector<Shape>::const_iterator shape_iter, std::vector<math::Vector<int>>::const_iterator orientation_iter)
+        : shape_{shape_iter}, orientation_{orientation_iter} {}
 
-    auto operator*() const noexcept -> std::tuple<Shape, math::Vector<int>> {
-      auto shape = (*shapes)[index];
-      auto orientation = (*orientations)[index];
-      return {shape, orientation};
-    }
+    auto operator*() const noexcept -> std::tuple<Shape, math::Vector<int>> { return {*shape_, *orientation_}; }
 
     Iterator operator++() noexcept {
-      ++index;
+      ++shape_;
+      ++orientation_;
       return *this;
     }
 
-    bool operator!=(const Iterator& other) const noexcept {
-      return index != other.index || shapes != other.shapes || orientations != other.orientations;
-    }
+    bool operator!=(const Iterator& other) const noexcept { return shape_ != other.shape_ or orientation_ != other.orientation_; }
   };
 
-  [[nodiscard]] Iterator begin() const noexcept { return {0, &shapes, &orientations}; }
-  [[nodiscard]] Iterator end() const noexcept { return {size(), &shapes, &orientations}; }
+  [[nodiscard]] Iterator begin() const noexcept { return {shapes_.cbegin(), orientations_.cbegin()}; }
+  [[nodiscard]] Iterator end() const noexcept { return {shapes_.cend(), orientations_.cend()}; }
 };
 
 /*
@@ -94,7 +86,7 @@ struct Traits {
    * fallible, returns a bool: true -> load_traits succeeded, false -> load_traits failed
    * forced move b/c nlohmann::json::parse takes an rvalue reference
    */
-  [[nodiscard]] static bool load_traits(std::string&& data) noexcept;
+  [[nodiscard]] static bool load_traits(byte id, std::string&& data) noexcept;
 };
 
 }  // namespace melon
