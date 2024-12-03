@@ -25,6 +25,8 @@ Team id (unsigned char, max 256):
 
 Each piece has "Traits" defined in a JSON
 A Trait is global for each Piece's id
+The "moves" and "attacks" fields are separate because of pawns
+The "attacks" field is for highlighting captures and calculating whether a square is defended by an opponent (for K)
 
 Board layout: stacked 2D ```std::vector```
 standardly, white is ```std::vector[0]``` and ```std::vector[1]```

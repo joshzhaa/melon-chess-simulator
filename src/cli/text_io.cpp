@@ -1,20 +1,10 @@
-#include <array>
-#include <cstddef>
+#include "melon/cli/text_io.hpp"
+
+#include "melon/piece.hpp"
 #include <format>
-#include <iostream>
-#include <nlohmann/json.hpp>
 #include <string>
 
-#include "melon/constants.hpp"
-#include "melon/game.hpp"
-#include "melon/math/matrix.hpp"
-#include "melon/piece.hpp"
-#include "melon/traits.hpp"
-#include "melon/traits_json.hpp"
-
 namespace {
-
-using namespace melon;
 
 constexpr std::array WHITE_ICONS = {
   "\u2654",
@@ -34,6 +24,10 @@ constexpr std::array BLACK_ICONS = {
   "\u265F",
 };
 
+}  // namespace
+
+namespace melon::text_io {
+
 std::string icon(const Piece& piece) {
   const auto& icon_set = piece.team() == 1 ? WHITE_ICONS : BLACK_ICONS;
   const auto id = piece.id();
@@ -44,7 +38,7 @@ std::string icon(const Piece& piece) {
 
 std::string text(const Piece& piece) { return std::format("{}:{}", piece.id(), piece.team()); }
 
-std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) {
+std::string serialize(const math::Matrix<Piece>& board, bool use_icons) {
   auto [m, n] = board.shape();
   std::string result;
   for (std::size_t i = m; i > 0; --i) {  // i is unsigned -> can't be < 0
@@ -58,15 +52,4 @@ std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) {
   return result;
 }
 
-}  // namespace
-
-int main() {
-  Game game;
-  std::cout << serialize(game.board(), true);
-
-  for (std::size_t piece_id = 0; piece_id < constants::STANDARD_TRAITS.size(); ++piece_id) {
-    std::cout << std::format("piece_id={}", piece_id) << '\n';
-    json json = Traits::db()[piece_id];
-    std::cout << json << '\n';
-  }
-}
+}  // namespace melon::text_io

@@ -27,10 +27,15 @@ public:
   [[nodiscard]] bool moved() const noexcept { return moved_; }
   void move() noexcept { moved_ = true; }
 
-  [[nodiscard]] auto move_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept
-    -> std::expected<math::Matrix<byte>, std::string_view>;
-  [[nodiscard]] auto attack_matrix(math::Vector<int> origin, const math::Matrix<Piece>& board) const noexcept
-    -> std::expected<math::Matrix<byte>, std::string_view>;
+  [[nodiscard]] auto move_matrix(
+    math::Vector<int> origin,         // position of this piece
+    const math::Matrix<Piece>& board  // board that includes this piece
+  ) const noexcept -> std::expected<math::Matrix<byte>, std::string_view>;
+
+  [[nodiscard]] auto attack_matrix(
+    math::Vector<int> origin,         // position of this piece
+    const math::Matrix<Piece>& board  // board that includes this piece
+  ) const noexcept -> std::expected<math::Matrix<byte>, std::string_view>;
 };
 
 }  // namespace melon

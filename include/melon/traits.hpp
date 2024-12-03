@@ -1,15 +1,14 @@
 /*
  * Each piece has "Traits" defined in a JSON.
  */
-#ifndef MELON_TRAITS_H_
-#define MELON_TRAITS_H_
+#ifndef MELON_TRAITS_HPP_
+#define MELON_TRAITS_HPP_
 
 #include <array>
 #include <expected>
 #include <vector>
 
 #include "constants.hpp"
-#include "melon/math/matrix.hpp"
 #include "melon/math/vector.hpp"
 #include "melon/util.hpp"
 
@@ -30,7 +29,7 @@ class Geometry {
 
 public:
   // factory func, to avoid defining a ctor -> needing to explicitly default ctor
-  [[nodiscard]] static Geometry make_geometry(std::vector<Shape>&& shapes, std::vector<math::Vector<int>>&& orientations) {
+  [[nodiscard]] static Geometry make_geometry(std::vector<Shape>&& shapes, std::vector<math::Vector<int>>&& orientations) noexcept {
     Geometry result{};
     result.shapes_ = std::move(shapes);
     result.orientations_ = std::move(orientations);

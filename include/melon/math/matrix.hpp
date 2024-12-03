@@ -1,8 +1,8 @@
 /*
  * Matrix provides 2D array functionality, not really a matrix in the linear algebra sense
  */
-#ifndef MELON_MATH_MATRIX_H_
-#define MELON_MATH_MATRIX_H_
+#ifndef MELON_MATH_MATRIX_HPP_
+#define MELON_MATH_MATRIX_HPP_
 
 #include <cassert>
 #include <functional>
@@ -19,7 +19,11 @@ public:
    * passing element by value, because you're about to copy T at least m*n times anyway
    * using explicit to prevent Matrix<T> m = {1, 2} which looks misleading for a Matrix
    */
-  explicit Matrix(std::size_t m, std::size_t n, T element = T{}) noexcept : elements{m, std::vector<T>(n, element)} {}
+  explicit Matrix(
+    std::tuple<size_t, size_t> shape,  // (m, n)
+    T element = T{}                    // initial value of all elements
+  ) noexcept
+      : elements{std::get<0>(shape), std::vector<T>(std::get<1>(shape), element)} {}
 
   // apparently vector<bool> causes this operator to return a reference to a temporary
   [[nodiscard]] T& operator[](std::size_t i, std::size_t j) noexcept { return elements[i][j]; }
@@ -58,7 +62,7 @@ template <typename T, BinaryOp<T> Fn>
 Matrix<T> elementwise(const Matrix<T>& left, const Matrix<T> right, Fn f) {
   assert(left.shape() == right.shape());  // potential UB if left and right are different shape
   auto [m, n] = left.shape();
-  Matrix<T> result{m, n};
+  Matrix<T> result{{m, n}};
   for (std::size_t i = 0; i < m; ++i) {
     for (std::size_t j = 0; j < n; ++j) {
       result[i, j] = f(left[i, j], right[i, j]);

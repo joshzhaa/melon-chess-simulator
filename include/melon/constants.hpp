@@ -1,5 +1,5 @@
-#ifndef MELON_CONSTANTS_H_
-#define MELON_CONSTANTS_H_
+#ifndef MELON_CONSTANTS_HPP_
+#define MELON_CONSTANTS_HPP_
 
 #include <cstddef>
 #include <string_view>
