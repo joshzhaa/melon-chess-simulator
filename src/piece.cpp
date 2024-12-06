@@ -1,10 +1,15 @@
 #include "melon/piece.hpp"
 
+#include <cassert>
+#include <cstddef>
+#include <expected>
 #include <optional>
+#include <string_view>
 
 #include "melon/math/matrix.hpp"
 #include "melon/math/vector.hpp"
 #include "melon/traits.hpp"
+#include "melon/util.hpp"
 
 namespace {
 
@@ -31,27 +36,33 @@ namespace melon {
   math::Matrix<byte> mask{pos.board->shape(), False};
   // Geometry iterator produces a temporary, must bind by value
   for (const auto [shape, orientation] : Traits::db()[id()].moves) {
-    math::Vector<int> origin{pos.xy};
+    math::Vector<int> square{pos.xy};
+    // handle each possible shape differently (only moves)
     switch (shape) {
       case Shape::POINT:
-        origin += orientation;
-        if (auto piece = pos.board->at(origin.y, origin.x);  //
-            piece and piece->id() == 0) {
+        square += orientation;
+        if (  // if piece at square is empty (id == 0)
+          auto piece = pos.board->at(square.y, square.x);
+          piece and piece->id() == 0
+        ) {
           mask_at(mask, pos.xy) = True;
         }
         break;
       case Shape::RAY:
         std::optional<Piece> piece;
         do {  // NOLINT(cppcoreguidelines-avoid-do-while), while requires violating DRY
-          origin += orientation;
-          mask_at(mask, origin) = True;
-          piece = pos.board->at(origin.y, origin.x);
+          square += orientation;
+          mask_at(mask, square) = True;
+          piece = pos.board->at(square.y, square.x);
         } while (piece and piece->id() == 0);
         break;
     }
-    if (auto piece = pos.board->at(origin.y, origin.x);  //
-        type == MatrixType::ATTACK and piece->team() != this->team()) {
-      mask_at(mask, pos.xy) = True;
+
+    if (  // if captures are enabled, mark one more square in the right direction
+      auto piece = pos.board->at(square.y, square.x);
+      type == MatrixType::ATTACK and piece->team() != this->team()
+    ) {
+      mask_at(mask, square) = True;
     }
   }
   return mask;

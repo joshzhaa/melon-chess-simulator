@@ -2,12 +2,14 @@
 
 #include <array>
 #include <cassert>
+#include <cstddef>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <utility>
 
 #include "melon/constants.hpp"
 #include "melon/traits_json.hpp"
+#include "melon/util.hpp"
 
 using json = nlohmann::json;  // NOLINT(misc-include-cleaner)
 

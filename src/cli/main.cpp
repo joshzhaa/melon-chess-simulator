@@ -10,14 +10,14 @@
 #include "melon/traits_json.hpp"
 
 using namespace melon;
-using json = nlohmann::json;
+using json = nlohmann::json;  // NOLINT(misc-include-cleaner)
 
 namespace {
 
 void list_pieces() {
   for (std::size_t piece_id = 0; piece_id < constants::STANDARD_TRAITS.size(); ++piece_id) {
     std::cout << std::format("piece_id={}", piece_id) << '\n';
-    json json = Traits::db()[piece_id];
+    const json json = Traits::db()[piece_id];
     std::cout << json << '\n';
   }
 }

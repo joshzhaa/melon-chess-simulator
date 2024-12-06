@@ -5,6 +5,6 @@
 using namespace melon;
 
 TEST(Traits, Moves) {
-  Geometry geometry;
+  const Geometry geometry;
   EXPECT_EQ(4, 5);
 }

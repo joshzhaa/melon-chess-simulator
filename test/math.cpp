@@ -10,9 +10,9 @@
 using namespace melon::math;
 
 TEST(Math, Basic) {
-  Vector<int> const u{1, 2};
-  Vector<int> const v{2, 3};
-  Vector<int> const result{3, 5};
+  Vector<int> const u{.x = 1, .y = 2};
+  Vector<int> const v{.x = 2, .y = 3};
+  Vector<int> const result{.x = 3, .y = 5};
   EXPECT_EQ(u + v, result);
 
   const std::size_t m = 4;

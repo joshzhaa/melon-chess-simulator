@@ -1,6 +1,9 @@
 #include "melon/cli/text_io.hpp"
 
+#include "melon/math/matrix.hpp"
 #include "melon/piece.hpp"
+#include <array>
+#include <cstddef>
 #include <format>
 #include <string>
 
