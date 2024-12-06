@@ -1,4 +1,20 @@
 ---
-Checks: '*,-llvmlibc*,-modernize-use-trailing-return-type,-fuchsia-trailing-return,-fuchsia-default-arguments-calls,-fuchsia-default-arguments-declarations,-readability-identifier-length,-hicpp-braces-around-statements,-readability-braces-around-statements,-google-readability-braces-around-statements,-google-build-using-namespace,-google-readability-todo,-cppcoreguidelines-pro-bounds-constant-array-index,-fuchsia-overloaded-operator,-bugprone-easily-swappable-parameters,-altera*'
+Checks: >
+  *,
+  -llvmlibc*,
+  -altera*,
+  -modernize-use-trailing-return-type,
+  -fuchsia-trailing-return,
+  -fuchsia-default-arguments-calls,
+  -fuchsia-default-arguments-declarations,
+  -fuchsia-overloaded-operator,
+  -readability-identifier-length,
+  -readability-braces-around-statements,
+  -hicpp-braces-around-statements,
+  -google-readability-braces-around-statements,
+  -google-build-using-namespace,
+  -google-readability-todo,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -bugprone-easily-swappable-parameters,
 ...
 

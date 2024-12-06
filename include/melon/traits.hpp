@@ -28,7 +28,7 @@ class Geometry {
   std::vector<math::Vector<int>> orientations_;
 
 public:
-  // factory func, to avoid defining a ctor -> needing to explicitly default ctor
+  // factory func, to avoid defining a ctor -> needing to explicitly default ctor (too verbose to delete)
   [[nodiscard]] static Geometry make_geometry(std::vector<Shape>&& shapes, std::vector<math::Vector<int>>&& orientations) noexcept {
     Geometry result{};
     result.shapes_ = std::move(shapes);

@@ -38,16 +38,7 @@ constexpr std::string_view KING_TRAITS = R"(
     { "orientation": [ 0, 1 ], "shape": "point" },
     { "orientation": [ 1, 1 ], "shape": "point" }
   ],
-  "attacks": [
-    { "orientation": [ 1, 0 ], "shape": "point" },
-    { "orientation": [ 1, -1 ], "shape": "point" },
-    { "orientation": [ 0, -1 ], "shape": "point" },
-    { "orientation": [ -1, -1 ], "shape": "point" },
-    { "orientation": [ -1, 0 ], "shape": "point" },
-    { "orientation": [ -1, 1 ], "shape": "point" },
-    { "orientation": [ 0, 1 ], "shape": "point" },
-    { "orientation": [ 1, 1 ], "shape": "point" }
-  ],
+  "attacks": [],
   "actions": ["castle"],
   "effects": ["check", "checkmate"]
 }
@@ -65,16 +56,7 @@ constexpr std::string_view QUEEN_TRAITS = R"(
     { "orientation": [ 0, 1 ], "shape": "ray" },
     { "orientation": [ 1, 1 ], "shape": "ray" }
   ],
-  "attacks": [
-    { "orientation": [ 1, 0 ], "shape": "ray" },
-    { "orientation": [ 1, -1 ], "shape": "ray" },
-    { "orientation": [ 0, -1 ], "shape": "ray" },
-    { "orientation": [ -1, -1 ], "shape": "ray" },
-    { "orientation": [ -1, 0 ], "shape": "ray" },
-    { "orientation": [ -1, 1 ], "shape": "ray" },
-    { "orientation": [ 0, 1 ], "shape": "ray" },
-    { "orientation": [ 1, 1 ], "shape": "ray" }
-  ],
+  "attacks": [],
   "actions": [],
   "effects": []
 }
@@ -88,12 +70,7 @@ constexpr std::string_view ROOK_TRAITS = R"(
     { "orientation": [ -1, 0 ], "shape": "ray" },
     { "orientation": [ 0, 1 ], "shape": "ray" }
   ],
-  "attacks": [
-    { "orientation": [ 1, 0 ], "shape": "ray" },
-    { "orientation": [ 0, -1 ], "shape": "ray" },
-    { "orientation": [ -1, 0 ], "shape": "ray" },
-    { "orientation": [ 0, 1 ], "shape": "ray" }
-  ],
+  "attacks": [],
   "actions": [],
   "effects": ["castle"]
 }
@@ -107,12 +84,7 @@ constexpr std::string_view BISHOP_TRAITS = R"(
     { "orientation": [ -1, -1 ], "shape": "ray" },
     { "orientation": [ -1, 1 ], "shape": "ray" }
   ],
-  "attacks": [
-    { "orientation": [ 1, 1 ], "shape": "ray" },
-    { "orientation": [ 1, -1 ], "shape": "ray" },
-    { "orientation": [ -1, -1 ], "shape": "ray" },
-    { "orientation": [ -1, 1 ], "shape": "ray" }
-  ],
+  "attacks": [],
   "actions": [],
   "effects": []
 }
@@ -130,16 +102,7 @@ constexpr std::string_view KNIGHT_TRAITS = R"(
     { "orientation": [ -2, 1 ], "shape": "point" },
     { "orientation": [ -1, -2 ], "shape": "point" }
   ],
-  "attacks": [
-    { "orientation": [ 1, 2 ], "shape": "point" },
-    { "orientation": [ 2, 1 ], "shape": "point" },
-    { "orientation": [ 2, -1 ], "shape": "point" },
-    { "orientation": [ 1, -2 ], "shape": "point" },
-    { "orientation": [ -1, -2 ], "shape": "point" },
-    { "orientation": [ -2, -1 ], "shape": "point" },
-    { "orientation": [ -2, 1 ], "shape": "point" },
-    { "orientation": [ -1, -2 ], "shape": "point" }
-  ],
+  "attacks": [],
   "actions": [],
   "effects": []
 }

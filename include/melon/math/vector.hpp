@@ -47,6 +47,13 @@ Vector<T> operator*(const Vector<T>& vector, T scalar) {
 }
 
 template <Scalar T>
+Vector<T>& operator+=(Vector<T>& left, const Vector<T>& right) {
+  left.x += right.x;
+  left.y += right.y;
+  return left;
+}
+
+template <Scalar T>
 bool operator==(const Vector<T>& left, const Vector<T>& right) {
   return left.x == right.x and left.y == right.y;
 }

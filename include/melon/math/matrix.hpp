@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <functional>
+#include <optional>
 #include <vector>
 
 namespace melon::math {
@@ -28,6 +29,19 @@ public:
   // apparently vector<bool> causes this operator to return a reference to a temporary
   [[nodiscard]] T& operator[](std::size_t i, std::size_t j) noexcept { return elements[i][j]; }
   [[nodiscard]] const T& operator[](std::size_t i, std::size_t j) const noexcept { return elements[i][j]; }
+  /*
+   * bounds checked indexing, returns optional copy
+   * needs to take a signed integer to bounds check negative values
+   */
+  std::optional<T> at(int i, int j) const noexcept {
+    if (i < 0 or j < 0) return std::nullopt;
+    // x and y are now guaranteed nonnegative
+    auto [m, n] = shape();
+    auto iu = static_cast<std::size_t>(i);
+    auto ju = static_cast<std::size_t>(j);
+    if (iu > n or ju > m) return std::nullopt;
+    return (*this)[iu, ju];
+  }
 
   /*
    * returns (m, n)

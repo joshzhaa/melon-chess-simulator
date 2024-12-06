@@ -27,14 +27,17 @@ public:
   [[nodiscard]] bool moved() const noexcept { return moved_; }
   void move() noexcept { moved_ = true; }
 
-  [[nodiscard]] auto move_matrix(
-    math::Vector<int> origin,         // position of this piece
-    const math::Matrix<Piece>& board  // board that includes this piece
-  ) const noexcept -> std::expected<math::Matrix<byte>, std::string_view>;
+  enum class MatrixType { ATTACK, MOVE };
 
-  [[nodiscard]] auto attack_matrix(
-    math::Vector<int> origin,         // position of this piece
-    const math::Matrix<Piece>& board  // board that includes this piece
+  // *this is at (*board)[x, y]
+  struct Position {
+    math::Vector<int> xy;
+    const math::Matrix<Piece>* board;  // Position is not user-facing, so nullptr only if programmer error
+  };
+
+  [[nodiscard]] auto matrix(
+    MatrixType type,  // flag to enable a capture for each geometry
+    Position pos
   ) const noexcept -> std::expected<math::Matrix<byte>, std::string_view>;
 };
 

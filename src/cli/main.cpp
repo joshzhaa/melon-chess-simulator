@@ -14,7 +14,6 @@ using json = nlohmann::json;
 
 namespace {
 
-/*
 void list_pieces() {
   for (std::size_t piece_id = 0; piece_id < constants::STANDARD_TRAITS.size(); ++piece_id) {
     std::cout << std::format("piece_id={}", piece_id) << '\n';
@@ -22,7 +21,6 @@ void list_pieces() {
     std::cout << json << '\n';
   }
 }
-*/
 
 }  // namespace 
 
