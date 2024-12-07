@@ -1,13 +1,15 @@
 ---
-BasedOnStyle: Google 
+BasedOnStyle: Google
 DerivePointerAlignment: false
 PointerAlignment: Left
 ColumnLimit: 150
 AccessModifierOffset: -2
 ContinuationIndentWidth: 2
 AlignAfterOpenBracket: BlockIndent
-BinPackArguments: false 
+BinPackArguments: false
 BinPackParameters: false
 ExperimentalAutoDetectBinPacking: false
 AllowAllParametersOfDeclarationOnNextLine: false
+PackConstructorInitializers: CurrentLine
+ConstructorInitializerIndentWidth: 2
 ...

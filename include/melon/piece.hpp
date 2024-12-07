@@ -1,5 +1,5 @@
-#ifndef MELON_PIECE_H_
-#define MELON_PIECE_H_
+#ifndef MELON_PIECE_HPP
+#define MELON_PIECE_HPP
 
 #include "melon/math/matrix.hpp"
 #include "melon/math/vector.hpp"
@@ -24,7 +24,7 @@ public:
   [[nodiscard]] bool moved() const noexcept { return moved_; }
   void move() noexcept { moved_ = true; }
 
-  enum class MatrixType { ATTACK, MOVE };
+  enum class MatrixType : byte { ATTACK, MOVE };
 
   // this Piece is at (*board)[y, x]
   struct Position {
@@ -40,4 +40,4 @@ public:
 
 }  // namespace melon
 
-#endif  // MELON_PIECE_H_
+#endif  // MELON_PIECE_HPP

@@ -1,5 +1,5 @@
-#ifndef MELON_TEXT_IO_HPP_
-#define MELON_TEXT_IO_HPP_
+#ifndef MELON_CLI_TEXT_IO_HPP
+#define MELON_CLI_TEXT_IO_HPP
 
 #include <string>
 
@@ -14,4 +14,4 @@ std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true);
 
 }  // namespace melon::text_io
 
-#endif // !MELON_TEXT_IO_HPP_
+#endif // MELON_CLI_TEXT_IO_HPP

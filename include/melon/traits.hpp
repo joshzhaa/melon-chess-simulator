@@ -46,7 +46,8 @@ public:
 
   public:
     Iterator(std::vector<Shape>::const_iterator shape_iter, std::vector<math::Vector<int>>::const_iterator orientation_iter)
-        : shape_{shape_iter}, orientation_{orientation_iter} {}
+      : shape_{shape_iter},
+        orientation_{orientation_iter} {}
 
     auto operator*() const noexcept -> std::tuple<Shape, math::Vector<int>> { return {*shape_, *orientation_}; }
 

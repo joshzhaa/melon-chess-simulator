@@ -2,8 +2,8 @@
  * This header provides nlohmann::json conversions for traits.hpp types
  */
 
-#ifndef MELON_TRAITS_JSON_HPP_
-#define MELON_TRAITS_JSON_HPP_
+#ifndef MELON_TRAITS_JSON_HPP
+#define MELON_TRAITS_JSON_HPP
 
 #include <nlohmann/json.hpp>
 
@@ -79,13 +79,13 @@ inline void to_json(json& json, const Traits& traits) {
 
 inline void from_json(const json& json, Traits& traits) {
   traits = Traits{
-    json["moves"],
-    json["attacks"],
-    json["actions"],
-    json["effects"],
+    .moves = json["moves"],
+    .attacks = json["attacks"],
+    .actions = json["actions"],
+    .effects = json["effects"],
   };
 }
 
 }  // namespace melon
 
-#endif  // !MELON_TRAITS_JSON_HPP_
+#endif  // MELON_TRAITS_JSON_HPP

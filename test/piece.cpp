@@ -1,15 +1,20 @@
 #include "melon/piece.hpp"
-#include "melon/cli/text_io.hpp"
-#include "melon/math/matrix.hpp"
 
 #include <gtest/gtest.h>
+
+#include <cstddef>
 #include <print>
+
+#include "melon/cli/text_io.hpp"
+#include "melon/math/matrix.hpp"
+#include "melon/math/vector.hpp"
+#include "melon/util.hpp"
 
 using namespace melon;
 
 namespace {
 
-template<typename T>
+template <typename T>
 void print(const math::Matrix<T>& matrix) {
   auto [m, n] = matrix.shape();
   std::println("matrix ({}, {})", m, n);
@@ -33,8 +38,8 @@ TEST(Piece, BasicMove) {
   board[Y, X] = Piece{2, 1};
   std::println("{}", text_io::serialize(board));
 
-  math::Vector<int> pos{X, Y};
-  auto move_matrix = board[Y, X].matrix(Piece::MatrixType::MOVE, Piece::Position{pos, &board});
+  math::Vector<int> const pos{.x = X, .y = Y};
+  auto move_matrix = board[Y, X].matrix(Piece::MatrixType::MOVE, Piece::Position{.xy = pos, .board = &board});
   print(move_matrix);
   math::Matrix<byte> expected;
   expected = {

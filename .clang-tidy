@@ -1,20 +1,28 @@
 ---
 Checks: >
-  *,
-  -llvmlibc*,
-  -altera*,
-  -modernize-use-trailing-return-type,
-  -fuchsia-trailing-return,
-  -fuchsia-default-arguments-calls,
-  -fuchsia-default-arguments-declarations,
-  -fuchsia-overloaded-operator,
-  -readability-identifier-length,
-  -readability-braces-around-statements,
-  -hicpp-braces-around-statements,
-  -google-readability-braces-around-statements,
-  -google-build-using-namespace,
-  -google-readability-todo,
+  abseil-*,
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  concurrency-mt-unsafe-*,
+  cppcoreguidelines-avoid-c-arrays-*,
+  google-*,
+  hicpp-*,
+  llvm-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -bugprone-easily-swappable-parameters,
+  -google-build-using-namespace,
+  -google-readability-todo,
+  -*-braces-around-statements,
+  -readability-identifier-length,
+  -modernize-use-trailing-return-type,
+
+HeaderFilterRegex: '.*include/melon/.*'
+UseColor: true
 ...
 

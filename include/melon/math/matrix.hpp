@@ -22,10 +22,12 @@ public:
    * passing element by value, because you're about to copy T at least m*n times anyway
    * using explicit to prevent Matrix<T> m = {1, 2} which looks misleading for a Matrix
    */
+  // clang-format off
   explicit Matrix(
     std::tuple<size_t, size_t> shape,  // (m, n)
     T element = T{}                    // initial value of all elements
   ) noexcept : elements{std::get<0>(shape), std::vector<T>(std::get<1>(shape), element)} {}
+  // clang-format on
 
   Matrix(Matrix&& other) = default;
   Matrix& operator=(Matrix&& other) = default;
@@ -38,7 +40,7 @@ public:
    */
   Matrix& operator=(std::initializer_list<std::initializer_list<T>> list) noexcept {
     elements = std::vector<std::vector<T>>();  // clear current elements (and its capacity)
-    std::size_t m = list.size();
+    std::size_t const m = list.size();
     elements.reserve(m);
     // no operator[] on std::initializer_list for some reason, so usage of pointer arithmetic is forced
     for (const std::initializer_list<T>* it = list.end(); it > list.begin(); --it) {
@@ -60,7 +62,7 @@ public:
    * bounds checked indexing, returns optional copy
    * needs to take a signed integer to bounds check negative values
    */
-  std::optional<T> at(int i, int j) const noexcept {
+  [[nodiscard]] std::optional<T> at(int i, int j) const noexcept {
     if (i < 0 or j < 0) return std::nullopt;
     // x and y are now guaranteed nonnegative
     auto [m, n] = shape();

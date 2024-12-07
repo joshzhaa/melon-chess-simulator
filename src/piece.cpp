@@ -15,17 +15,16 @@ using namespace melon;
 
 byte& mask_at(math::Matrix<byte>& mask, math::Vector<int> pos) noexcept {
   assert(mask.at(pos.y, pos.x));  // programmer must bounds check this function
-  return mask[ // return a reference to mask
-    static_cast<std::size_t>(pos.y),  // xy == ji
-    static_cast<std::size_t>(pos.x)
-  ];
+  auto xu = static_cast<std::size_t>(pos.x);
+  auto yu = static_cast<std::size_t>(pos.y);
+  return mask[yu, xu];
 }
 
 void assert_consistency(const Piece::Position& pos) noexcept {
 #ifndef NDEBUG
   assert(pos.board);
   assert(pos.xy.x >= 0 and pos.xy.y >= 0);
-  auto [m, n]= pos.board->shape();
+  auto [m, n] = pos.board->shape();
   auto xu = static_cast<std::size_t>(pos.xy.x);
   auto yu = static_cast<std::size_t>(pos.xy.y);
   assert(xu < n and yu < m);
@@ -67,10 +66,9 @@ namespace melon {
         mask_at(mask, pos.xy) = False;  // noop moves are not legal
         break;
     }
-
     if (  // if captures are enabled, mark one more square in the right direction
       auto piece = pos.board->at(square.y, square.x);
-      type == MatrixType::ATTACK and piece->team() != this->team()
+      type == MatrixType::ATTACK and piece and piece->team() != this->team()
     ) {
       mask_at(mask, square) = True;
     }
