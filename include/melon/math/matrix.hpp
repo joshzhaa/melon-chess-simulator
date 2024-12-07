@@ -6,16 +6,18 @@
 
 #include <cassert>
 #include <functional>
+#include <initializer_list>
 #include <optional>
 #include <vector>
 
 namespace melon::math {
 
 template <typename T>
-class Matrix {
+class Matrix {  // NOLINT(*-special-member-functions)
   std::vector<std::vector<T>> elements;
 
 public:
+  Matrix() = default;
   /*
    * passing element by value, because you're about to copy T at least m*n times anyway
    * using explicit to prevent Matrix<T> m = {1, 2} which looks misleading for a Matrix
@@ -23,8 +25,33 @@ public:
   explicit Matrix(
     std::tuple<size_t, size_t> shape,  // (m, n)
     T element = T{}                    // initial value of all elements
-  ) noexcept
-      : elements{std::get<0>(shape), std::vector<T>(std::get<1>(shape), element)} {}
+  ) noexcept : elements{std::get<0>(shape), std::vector<T>(std::get<1>(shape), element)} {}
+
+  Matrix(Matrix&& other) = default;
+  Matrix& operator=(Matrix&& other) = default;
+
+  /*
+   * list is assumed to be in xy, rather than ij (this is different from other methods here)
+   * no ctor for intializer_list is defined because it clobbers the general {} syntax
+   * since Matrix will often hold numbers, this is to be avoided
+   * the cost in this case is that user code must call operator= on another line from the declaration
+   */
+  Matrix& operator=(std::initializer_list<std::initializer_list<T>> list) noexcept {
+    elements = std::vector<std::vector<T>>();  // clear current elements (and its capacity)
+    std::size_t m = list.size();
+    elements.reserve(m);
+    // no operator[] on std::initializer_list for some reason, so usage of pointer arithmetic is forced
+    for (const std::initializer_list<T>* it = list.end(); it > list.begin(); --it) {
+      const auto* i = it - 1;
+      std::vector<T> row;
+      row.reserve(i->size());
+      for (const T* j = i->begin(); j < i->end(); ++j) {
+        row.push_back(*j);
+      }
+      elements.push_back(std::move(row));
+    }
+    return *this;
+  }
 
   // apparently vector<bool> causes this operator to return a reference to a temporary
   [[nodiscard]] T& operator[](std::size_t i, std::size_t j) noexcept { return elements[i][j]; }
@@ -39,7 +66,7 @@ public:
     auto [m, n] = shape();
     auto iu = static_cast<std::size_t>(i);
     auto ju = static_cast<std::size_t>(j);
-    if (iu > n or ju > m) return std::nullopt;
+    if (iu >= n or ju >= m) return std::nullopt;
     return (*this)[iu, ju];
   }
 
@@ -51,6 +78,7 @@ public:
     return {elements.size(), elements[0].size()};
   }
 
+  // operator!= auto generated from this
   [[nodiscard]] bool operator==(const Matrix& other) const {
     if (this->shape() != other.shape()) return false;
     auto [m, n] = this->shape();
@@ -73,7 +101,7 @@ concept BinaryOp = requires(Fn f, T a, T b) {
 };
 
 template <typename T, BinaryOp<T> Fn>
-Matrix<T> elementwise(const Matrix<T>& left, const Matrix<T> right, Fn f) {
+Matrix<T> elementwise(const Matrix<T>& left, const Matrix<T>& right, Fn f) {
   assert(left.shape() == right.shape());  // potential UB if left and right are different shape
   auto [m, n] = left.shape();
   Matrix<T> result{{m, n}};

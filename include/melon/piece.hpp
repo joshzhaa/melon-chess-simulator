@@ -1,9 +1,6 @@
 #ifndef MELON_PIECE_H_
 #define MELON_PIECE_H_
 
-#include <expected>
-#include <string_view>
-
 #include "melon/math/matrix.hpp"
 #include "melon/math/vector.hpp"
 #include "melon/util.hpp"
@@ -29,7 +26,7 @@ public:
 
   enum class MatrixType { ATTACK, MOVE };
 
-  // *this is at (*board)[x, y]
+  // this Piece is at (*board)[y, x]
   struct Position {
     math::Vector<int> xy;
     const math::Matrix<Piece>* board;  // Position is not user-facing, so nullptr only if programmer error
@@ -38,7 +35,7 @@ public:
   [[nodiscard]] auto matrix(
     MatrixType type,  // flag to enable a capture for each geometry
     Position pos
-  ) const noexcept -> std::expected<math::Matrix<byte>, std::string_view>;
+  ) const noexcept -> math::Matrix<byte>;
 };
 
 }  // namespace melon
