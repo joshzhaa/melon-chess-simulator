@@ -17,9 +17,10 @@ using namespace melon;
 
 byte& mask_at(math::Matrix<byte>& mask, math::Vector<int> pos) {
   assert(mask.at(pos.y, pos.x));  // programmer must bounds check this
-  return mask
-    [static_cast<std::size_t>(pos.y),  // xy == ji
-     static_cast<std::size_t>(pos.x)];
+  return mask[ // return a reference to mask
+    static_cast<std::size_t>(pos.y),  // xy == ji
+    static_cast<std::size_t>(pos.x)
+  ];
 }
 
 }  // namespace

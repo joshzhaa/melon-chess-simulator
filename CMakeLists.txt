@@ -38,9 +38,9 @@ add_executable(test_math test/math.cpp)
 target_link_libraries(test_math GTest::gtest_main)
 target_include_directories(test_math PUBLIC include)
 
-add_executable(test_traits test/traits.cpp)
-target_link_libraries(test_traits GTest::gtest_main)
-target_include_directories(test_traits PUBLIC include)
+add_executable(test_piece test/piece.cpp src/piece.cpp src/cli/text_io.cpp)
+target_link_libraries(test_piece GTest::gtest_main)
+target_include_directories(test_piece PUBLIC include)
 
 include(GoogleTest)
 gtest_discover_tests(test_math test_traits)
