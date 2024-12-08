@@ -8,13 +8,13 @@
 
 namespace melon::text_io {
 
-std::string icon(const Piece& piece);  // unicode chess icon for piece (id, team)
-std::string text(const Piece& piece);  // ascii text representation of piece (id, team)
+std::string icon(const Piece& piece) noexcept;  // unicode chess icon for piece (id, team)
+std::string text(const Piece& piece) noexcept;  // ascii text representation of piece (id, team)
 // text representation of board
-std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true);
+std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) noexcept;
 
 template <typename T>
-void print(const math::Matrix<T>& matrix) {
+void print(const math::Matrix<T>& matrix) noexcept {
   auto [m, n] = matrix.shape();
   std::println("matrix ({}, {})", m, n);
   for (std::size_t i = m; i > 0; --i) {  // i is unsigned -> can't be < 0

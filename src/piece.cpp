@@ -42,8 +42,15 @@ namespace melon {
   using namespace std::literals;
   assert_consistency(pos);
   math::Matrix<byte> mask{pos.board->shape(), False};
+  const Traits& traits = Traits::db()[id()];
+  // get geometry for attacking if attacks != moves (signalled by size == 0)
+  // clang-format off
+  const Geometry& geometry =
+    type == MatrixType::ATTACK and traits.attacks.size() == 0 ?
+    traits.attacks : traits.moves;
+  // clang-format on
   // Geometry iterator produces a temporary, must bind by value
-  for (const auto [shape, orientation] : Traits::db()[id()].moves) {
+  for (const auto [shape, orientation] : geometry) {
     math::Vector<int> square{pos.xy};
     // handle each possible shape differently (only moves)
     switch (shape) {

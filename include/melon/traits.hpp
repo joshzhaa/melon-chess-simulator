@@ -14,9 +14,9 @@
 
 namespace melon {
 
-enum class Action : byte { EN_PASSANT = 0, CASTLE = 1, DOUBLE_STEP = 2 };
-enum class Effect : byte { EN_PASSANT = 0, CASTLE = 1, PROMOTION = 2, CHECK = 3, CHECKMATE = 4 };
-enum class Shape : byte { POINT = 0, RAY = 1 };
+enum class Action : byte { EN_PASSANT, CASTLE, DOUBLE_STEP };
+enum class Effect : byte { EN_PASSANT, CASTLE, PROMOTION, CHECK, CHECKMATE };
+enum class Shape : byte { POINT, RAY };
 
 /*
  * a Geometry is several shapes overlaid on top of one another
@@ -65,13 +65,15 @@ public:
 };
 
 /*
- * Traits is a simple aggregate struct with some associated static functions for accessing the global Traits::db() and loading more Traits from JSON
+ * Each piece has Traits
+ * Traits has some associated static functions for accessing the global Traits::db() and loading more Traits from JSON
  */
 struct Traits {
   Geometry moves;
   Geometry attacks;
   std::vector<Action> actions;
   std::vector<Effect> effects;
+
   /*
    * returns array with traits for every loaded piece defining each one's behavior.
    * the array is indexed by Piece::id() and returns the corresponding Traits struct.
@@ -87,6 +89,16 @@ struct Traits {
    * forced move b/c nlohmann::json::parse takes an rvalue reference
    */
   [[nodiscard]] static bool load_traits(byte id, std::string&& data) noexcept;
+};
+
+struct Team {
+  math::Vector<int> forward;
+
+  /*
+   * returns array for team data, indexed by team index.
+   * each team needs a "forward" direction for its pawns and their promotion, implicitly defining castle direction as well
+   */
+  [[nodiscard]] static auto db() noexcept -> std::array<Team, constants::MAX_TEAMS>&;
 };
 
 }  // namespace melon

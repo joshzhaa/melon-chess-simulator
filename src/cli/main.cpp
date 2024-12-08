@@ -6,7 +6,7 @@
 
 using namespace melon;
 
-int main() {
+int main() {  // NOLINT(bugprone-exception-escape)
   Game game;
   std::println("{}", text_io::serialize(game.board(), true));
 }

@@ -43,15 +43,13 @@ constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_TEAMS{
 }  // namespace
 
 namespace melon {
-
-Game::Game() noexcept
-  : moves{
-      {N, N}
-} {
+// clang-format off
+Game::Game() noexcept : moves{{N, N}} {
+//clang-format on
   math::Matrix<Piece> board{
     {N, N},
     Piece{0, 0}
-  };  // empty board
+  };
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       auto piece = DEFAULT_PIECES[i][j];

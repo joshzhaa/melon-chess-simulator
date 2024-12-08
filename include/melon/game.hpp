@@ -34,6 +34,7 @@ public:
   [[nodiscard]] auto board() const noexcept -> const melon::math::Matrix<melon::Piece>& { return boards.back(); }
   // SELECT -> expecting a piece selection, MOVE -> expecting a move selection
   [[nodiscard]] Mode mode() const noexcept { return select ? Mode::MOVE : Mode::SELECT; }
+  [[nodiscard]] std::size_t ply_count() const noexcept { return boards.size(); }
   // highlight squares that the selected piece can move to
   [[nodiscard]] bool highlight(std::size_t i, std::size_t j) const noexcept { return static_cast<bool>(moves[i, j]); }
   void touch() noexcept;

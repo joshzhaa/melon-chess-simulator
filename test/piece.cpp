@@ -21,8 +21,8 @@ TEST(Piece, BasicMove) {
   board[Y, X] = Piece{2, 1};
   const Piece& queen = board[Y, X];
   const Piece::Position pos{
-    .xy={.x = X, .y = Y},
-    .board=&board
+    .xy = {.x = X, .y = Y},
+    .board = &board,
   };
   // check move matrix from single Q
   {

@@ -31,7 +31,7 @@ constexpr std::array BLACK_ICONS = {
 
 namespace melon::text_io {
 
-std::string icon(const Piece& piece) {
+std::string icon(const Piece& piece) noexcept {
   const auto& icon_set = piece.team() == 1 ? WHITE_ICONS : BLACK_ICONS;
   const auto id = piece.id();
   if (id == 0) return "\u00b7";  // empty square -> central dot
@@ -39,9 +39,11 @@ std::string icon(const Piece& piece) {
   return "?";  // unrecongized Piece
 }
 
-std::string text(const Piece& piece) { return std::format("{}:{}", piece.id(), piece.team()); }
+std::string text(const Piece& piece) noexcept {  // NOLINT(bugprone-exception-escape)
+  return std::format("{}:{}", piece.id(), piece.team()); 
+}
 
-std::string serialize(const math::Matrix<Piece>& board, bool use_icons) {
+std::string serialize(const math::Matrix<Piece>& board, bool use_icons) noexcept {
   auto [m, n] = board.shape();
   std::string result;
   for (std::size_t i = m; i > 0; --i) {  // i is unsigned -> can't be < 0

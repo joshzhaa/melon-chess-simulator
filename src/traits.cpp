@@ -11,15 +11,13 @@
 #include "melon/traits_json.hpp"
 #include "melon/util.hpp"
 
-using json = nlohmann::json;  // NOLINT(misc-include-cleaner)
-
 namespace {
 
 using namespace melon;
-using namespace std::literals;
+using json = nlohmann::json;  // NOLINT(misc-include-cleaner)
 
-auto default_traits() noexcept -> std::array<Traits, constants::MAX_PIECES> {
-  std::array<Traits, constants::MAX_PIECES> traits{};  // force default initialization for whole array
+auto default_traits() noexcept -> std::array<Traits, constants::MAX_PIECES> {  // NOLINT(bugprone-exception-escape)
+  std::array<Traits, constants::MAX_PIECES> traits{};                          // force default initialization for whole array
   for (std::size_t piece_id = 0; piece_id < constants::STANDARD_TRAITS.size(); ++piece_id) {
     const json obj = json::parse(constants::STANDARD_TRAITS[piece_id], nullptr, false);
     assert(not obj.is_discarded());  // for STANDARD_TRAITS, assert failure can only be due to programmer error
@@ -37,12 +35,22 @@ auto Traits::db() noexcept -> std::array<Traits, constants::MAX_PIECES>& {
   return loaded_pieces;
 }
 
-bool Traits::load_traits(byte id, std::string&& data) noexcept {
+bool Traits::load_traits(byte id, std::string&& data) noexcept {  // NOLINT(bugprone-exception-escape)
   const json obj = json::parse(std::move(data), nullptr, false);
   if (obj.is_discarded()) return false;
   // potential race condition, doesn't matter for single threaded
   db()[id] = obj;
   return true;
+}
+
+// TODO: define more general way to load teams
+// currently only supports standard chess rules
+auto Team::db() noexcept -> std::array<Team, constants::MAX_TEAMS>& {
+  static std::array<Team, constants::MAX_TEAMS> teams{
+    Team{{.x = 0, .y = 1}},
+    Team{{.x = 0, .y = -1}},
+  };
+  return teams;
 }
 
 }  // namespace melon
