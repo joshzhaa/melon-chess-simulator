@@ -33,7 +33,8 @@ public:
   Matrix& operator=(Matrix&& other) = default;
 
   /*
-   * list is assumed to be in xy, rather than ij (this is different from other methods here)
+   * internally, matrices are stored "upside down" so they can be indexed by [y, x]
+   * but, the initializer_list is taken to be "right side up"
    * no ctor for intializer_list is defined because it clobbers the general {} syntax
    * since Matrix will often hold numbers, this is to be avoided
    * the cost in this case is that user code must call operator= on another line from the declaration
@@ -106,7 +107,9 @@ template <typename T, BinaryOp<T> Fn>
 Matrix<T> elementwise(const Matrix<T>& left, const Matrix<T>& right, Fn f) {
   assert(left.shape() == right.shape());  // potential UB if left and right are different shape
   auto [m, n] = left.shape();
-  Matrix<T> result{{m, n}};
+  Matrix<T> result{
+    {m, n}
+  };
   for (std::size_t i = 0; i < m; ++i) {
     for (std::size_t j = 0; j < n; ++j) {
       result[i, j] = f(left[i, j], right[i, j]);

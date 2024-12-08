@@ -14,34 +14,44 @@ namespace {
 
 constexpr std::size_t N = 8;
 
-constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_PIECES{{
-  {3, 5, 4, 2, 1, 4, 5, 3},
-  {6, 6, 6, 6, 6, 6, 6, 6},
-  {0, 0, 0, 0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0, 0, 0, 0},
-  {6, 6, 6, 6, 6, 6, 6, 6},
-  {3, 5, 4, 2, 1, 4, 5, 3},
-}};
+constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_PIECES{
+  {
+   {3, 5, 4, 2, 1, 4, 5, 3},
+   {6, 6, 6, 6, 6, 6, 6, 6},
+   {0, 0, 0, 0, 0, 0, 0, 0},
+   {0, 0, 0, 0, 0, 0, 0, 0},
+   {0, 0, 0, 0, 0, 0, 0, 0},
+   {0, 0, 0, 0, 0, 0, 0, 0},
+   {6, 6, 6, 6, 6, 6, 6, 6},
+   {3, 5, 4, 2, 1, 4, 5, 3},
+   }
+};
 
-constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_TEAMS{{
-  {1, 1, 1, 1, 1, 1, 1, 1},
-  {1, 1, 1, 1, 1, 1, 1, 1},
-  {0, 0, 0, 0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0, 0, 0, 0},
-  {2, 2, 2, 2, 2, 2, 2, 2},
-  {2, 2, 2, 2, 2, 2, 2, 2},
-}};
+constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_TEAMS{
+  {
+   {1, 1, 1, 1, 1, 1, 1, 1},
+   {1, 1, 1, 1, 1, 1, 1, 1},
+   {0, 0, 0, 0, 0, 0, 0, 0},
+   {0, 0, 0, 0, 0, 0, 0, 0},
+   {0, 0, 0, 0, 0, 0, 0, 0},
+   {0, 0, 0, 0, 0, 0, 0, 0},
+   {2, 2, 2, 2, 2, 2, 2, 2},
+   {2, 2, 2, 2, 2, 2, 2, 2},
+   }
+};
 
 }  // namespace
 
 namespace melon {
 
-Game::Game() noexcept : moves{{N, N}} {
-  math::Matrix<Piece> board{{N, N}, Piece{0, 0}};  // empty board
+Game::Game() noexcept
+  : moves{
+      {N, N}
+} {
+  math::Matrix<Piece> board{
+    {N, N},
+    Piece{0, 0}
+  };  // empty board
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       auto piece = DEFAULT_PIECES[i][j];

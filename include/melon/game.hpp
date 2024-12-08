@@ -24,7 +24,7 @@ class Game {
   std::vector<math::Matrix<Piece>> boards;  // history of board states
   math::Matrix<byte> moves;                 // value only meaningful in Mode::MOVE, byte to avoid vector<bool>
   std::optional<math::Vector<int>> select;  // null -> no selection ("select mode")
-  int padding;                              // TODO: remove
+  int padding{};                            // TODO: remove
 
 public:
   // Constructs Game at initial state of standard chess game

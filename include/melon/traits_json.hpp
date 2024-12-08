@@ -16,35 +16,35 @@ namespace melon {
 NLOHMANN_JSON_SERIALIZE_ENUM(
   Action,
   {
-    {Action::EN_PASSANT, "en_passant"},
-    {Action::CASTLE, "castle"},
+    {Action::EN_PASSANT,  "en_passant" },
+    {Action::CASTLE,      "castle"     },
     {Action::DOUBLE_STEP, "double_step"},
-  }
+}
 )
 
 NLOHMANN_JSON_SERIALIZE_ENUM(
   Effect,
   {
     {Effect::EN_PASSANT, "en_passant"},
-    {Effect::CASTLE, "castle"},
-    {Effect::PROMOTION, "promotion"},
-    {Effect::CHECK, "check"},
-    {Effect::CHECKMATE, "checkmate"},
-  }
+    {Effect::CASTLE,     "castle"    },
+    {Effect::PROMOTION,  "promotion" },
+    {Effect::CHECK,      "check"     },
+    {Effect::CHECKMATE,  "checkmate" },
+}
 )
 
 NLOHMANN_JSON_SERIALIZE_ENUM(
   Shape,
   {
     {Shape::POINT, "point"},
-    {Shape::RAY, "ray"},
-  }
+    {Shape::RAY,   "ray"  },
+}
 )
 
 inline void to_json(json& json, const std::tuple<Shape, math::Vector<int>>& pair) {
   auto [shape, orientation] = pair;
   json = {
-    {"shape", shape},
+    {"shape",       shape                         },
     {"orientation", {orientation.x, orientation.y}},
   };
 }
@@ -70,7 +70,7 @@ inline void from_json(const json& json, Geometry& geometry) {
 
 inline void to_json(json& json, const Traits& traits) {
   json = {
-    {"moves", traits.moves},
+    {"moves",   traits.moves  },
     {"attacks", traits.attacks},
     {"actions", traits.actions},
     {"effects", traits.effects},

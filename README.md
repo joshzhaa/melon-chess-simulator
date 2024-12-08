@@ -35,7 +35,8 @@ standardly, white is ```std::vector[0]``` and ```std::vector[1]```
 standardly, black is ```std::vector[6]``` and ```std::vector[7]```
 Basically, the board is 1st quadrant Z2, which is convenient for conceptualizing ```melon::math::Vector```
 However, it makes printing the 2D ```std::vector``` the usual way misleading, as the usual way implies the board is 4th quadrant Z2.
-Verdict: printing is less important than the keeping the board in the 1st quadrant
+Verdict: printing is less important than the keeping the board in the 1st quadrant.
+Basically, store matrices "upside down" rather than "right side up"
 
 # Dependencies
 1. clang (dev: clangd, clang-format, clang-tidy)
@@ -47,6 +48,6 @@ Verdict: printing is less important than the keeping the board in the 1st quadra
 cmake lines to copy and paste
 ```
 cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=TRUE -S . -B Release
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=TRUE -S . -B release
 cmake --build build -j4
 ```

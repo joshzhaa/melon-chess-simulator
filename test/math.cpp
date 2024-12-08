@@ -17,7 +17,9 @@ TEST(Math, Basic) {
 
   const std::size_t m = 4;
   const std::size_t n = 5;
-  Matrix<int> matrix{{m, n}};
+  Matrix<int> matrix{
+    {m, n}
+  };
 
   for (std::size_t i = 0; i < m; ++i) {
     for (std::size_t j = 0; j < n; ++j) {
@@ -30,15 +32,21 @@ TEST(Math, Basic) {
 }
 
 TEST(Math, Edge) {
-  Matrix<int> const matrix{{0, 0}};
+  Matrix<int> const matrix{
+    {0, 0}
+  };
   EXPECT_EQ(matrix.shape(), (std::tuple<int, int>{0, 0}));
 }
 
 TEST(Math, Elementwise) {
   unsigned const m = 4;
   unsigned const n = 4;
-  Matrix<unsigned> a{{m, n}};
-  Matrix<unsigned> b{{m, n}};
+  Matrix<unsigned> a{
+    {m, n}
+  };
+  Matrix<unsigned> b{
+    {m, n}
+  };
   for (unsigned i = 0; i < m; ++i) {
     for (unsigned j = 0; j < n; ++j) {
       a[i, j] = 2 * (i + j);
