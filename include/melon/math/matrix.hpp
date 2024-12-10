@@ -44,6 +44,7 @@ public:
     std::size_t const m = list.size();
     elements.reserve(m);
     // no operator[] on std::initializer_list for some reason, so usage of pointer arithmetic is forced
+    // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     for (const std::initializer_list<T>* it = list.end(); it > list.begin(); --it) {
       const auto* i = it - 1;
       std::vector<T> row;
@@ -53,6 +54,7 @@ public:
       }
       elements.push_back(std::move(row));
     }
+    // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     return *this;
   }
 

@@ -47,8 +47,9 @@ bool Traits::load_traits(byte id, std::string&& data) noexcept {  // NOLINT(bugp
 // currently only supports standard chess rules
 auto Team::db() noexcept -> std::array<Team, constants::MAX_TEAMS>& {
   static std::array<Team, constants::MAX_TEAMS> teams{
-    Team{{.x = 0, .y = 1}},
-    Team{{.x = 0, .y = -1}},
+    Team{{.x = 0, .y = 0}},   // null team owns empty squares
+    Team{{.x = 0, .y = 1}},   // white
+    Team{{.x = 0, .y = -1}},  // black
   };
   return teams;
 }

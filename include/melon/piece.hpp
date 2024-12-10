@@ -27,14 +27,14 @@ public:
   enum class MatrixType : byte { ATTACK, MOVE };
 
   // this Piece is at (*board)[y, x]
-  struct Position {
+  struct Place {
     math::Vector<int> xy;
-    const math::Matrix<Piece>* board;  // Position is not user-facing, so nullptr only if programmer error
+    const math::Matrix<Piece>* board;  // Place is not user-facing, so nullptr only if programmer error
   };
 
   [[nodiscard]] auto matrix(
     MatrixType type,  // flag to enable a capture for each geometry
-    Position pos
+    Place pos
   ) const noexcept -> math::Matrix<byte>;
 };
 

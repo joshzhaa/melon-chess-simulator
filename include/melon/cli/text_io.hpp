@@ -13,8 +13,9 @@ std::string text(const Piece& piece) noexcept;  // ascii text representation of 
 // text representation of board
 std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) noexcept;
 
+// TODO: remove this
 template <typename T>
-void print(const math::Matrix<T>& matrix) noexcept {
+void print(const math::Matrix<T>& matrix) noexcept {  // NOLINT(bugprone-exception-escape)
   auto [m, n] = matrix.shape();
   std::println("matrix ({}, {})", m, n);
   for (std::size_t i = m; i > 0; --i) {  // i is unsigned -> can't be < 0

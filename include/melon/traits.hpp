@@ -92,11 +92,11 @@ struct Traits {
 };
 
 struct Team {
-  math::Vector<int> forward;
+  math::Vector<int> facing;
 
   /*
    * returns array for team data, indexed by team index.
-   * each team needs a "forward" direction for its pawns and their promotion, implicitly defining castle direction as well
+   * each team needs a "facing" direction for its pawns and their promotion, implicitly defining castle direction as well
    */
   [[nodiscard]] static auto db() noexcept -> std::array<Team, constants::MAX_TEAMS>&;
 };
