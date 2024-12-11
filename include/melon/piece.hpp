@@ -34,7 +34,7 @@ public:
 
   [[nodiscard]] auto matrix(
     MatrixType type,  // flag to enable a capture for each geometry
-    Place pos
+    Place place
   ) const noexcept -> math::Matrix<byte>;
 };
 

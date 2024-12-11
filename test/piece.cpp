@@ -4,7 +4,6 @@
 
 #include <cstddef>
 
-#include "melon/cli/text_io.hpp"
 #include "melon/math/matrix.hpp"
 #include "melon/util.hpp"
 
@@ -26,74 +25,63 @@ TEST(Piece, Queen) {
     .board = &board,
   };
   // check move matrix from single Q
-  {
-    auto matrix = queen.matrix(Piece::MatrixType::MOVE, pos);
-    math::Matrix<byte> expected;
-    expected = {
-      {True,  False, False, True,  False, False, True,  False},
-      {False, True,  False, True,  False, True,  False, False},
-      {False, False, True,  True,  True,  False, False, False},
-      {True,  True,  True,  False, True,  True,  True,  True },
-      {False, False, True,  True,  True,  False, False, False},
-      {False, True,  False, True,  False, True,  False, False},
-      {True,  False, False, True,  False, False, True,  False},
-      {False, False, False, True,  False, False, False, True }
-    };
-    EXPECT_EQ(matrix, expected);
-  }
+  auto matrix = queen.matrix(Piece::MatrixType::MOVE, pos);
+  math::Matrix<byte> expected;
+  expected = {
+    {True,  False, False, True,  False, False, True,  False},
+    {False, True,  False, True,  False, True,  False, False},
+    {False, False, True,  True,  True,  False, False, False},
+    {True,  True,  True,  False, True,  True,  True,  True },
+    {False, False, True,  True,  True,  False, False, False},
+    {False, True,  False, True,  False, True,  False, False},
+    {True,  False, False, True,  False, False, True,  False},
+    {False, False, False, True,  False, False, False, True }
+  };
+  EXPECT_EQ(matrix, expected);
   // add friendly pieces to block Q
   board[N - 1, 0] = Piece{3, 1};
   board[N - 2, 3] = Piece{3, 1};
   // move matrix cannot capture friendly pieces
-  {
-    auto matrix = queen.matrix(Piece::MatrixType::MOVE, pos);
-    math::Matrix<byte> expected;
-    expected = {
-      {False, False, False, False, False, False, True,  False},
-      {False, True,  False, False, False, True,  False, False},
-      {False, False, True,  True,  True,  False, False, False},
-      {True,  True,  True,  False, True,  True,  True,  True },
-      {False, False, True,  True,  True,  False, False, False},
-      {False, True,  False, True,  False, True,  False, False},
-      {True,  False, False, True,  False, False, True,  False},
-      {False, False, False, True,  False, False, False, True }
-    };
-    EXPECT_EQ(matrix, expected);
-  }
+  matrix = queen.matrix(Piece::MatrixType::MOVE, pos);
+  expected = {
+    {False, False, False, False, False, False, True,  False},
+    {False, True,  False, False, False, True,  False, False},
+    {False, False, True,  True,  True,  False, False, False},
+    {True,  True,  True,  False, True,  True,  True,  True },
+    {False, False, True,  True,  True,  False, False, False},
+    {False, True,  False, True,  False, True,  False, False},
+    {True,  False, False, True,  False, False, True,  False},
+    {False, False, False, True,  False, False, False, True }
+  };
+  EXPECT_EQ(matrix, expected);
   // attack matrix can't capture friendlies either
-  {
-    auto matrix = queen.matrix(Piece::MatrixType::ATTACK, pos);
-    math::Matrix<byte> expected;
-    expected = {
-      {False, False, False, False, False, False, True,  False},
-      {False, True,  False, False, False, True,  False, False},
-      {False, False, True,  True,  True,  False, False, False},
-      {True,  True,  True,  False, True,  True,  True,  True },
-      {False, False, True,  True,  True,  False, False, False},
-      {False, True,  False, True,  False, True,  False, False},
-      {True,  False, False, True,  False, False, True,  False},
-      {False, False, False, True,  False, False, False, True }
-    };
-    EXPECT_EQ(matrix, expected);
-  }
+  matrix = queen.matrix(Piece::MatrixType::ATTACK, pos);
+  expected = {
+    {False, False, False, False, False, False, True,  False},
+    {False, True,  False, False, False, True,  False, False},
+    {False, False, True,  True,  True,  False, False, False},
+    {True,  True,  True,  False, True,  True,  True,  True },
+    {False, False, True,  True,  True,  False, False, False},
+    {False, True,  False, True,  False, True,  False, False},
+    {True,  False, False, True,  False, False, True,  False},
+    {False, False, False, True,  False, False, False, True }
+  };
+  EXPECT_EQ(matrix, expected);
   // but attack matrix can capture enemy pieces
   board[N - 1, 0] = Piece{3, 2};
   board[N - 2, 3] = Piece{3, 2};
-  {
-    auto matrix = queen.matrix(Piece::MatrixType::ATTACK, pos);
-    math::Matrix<byte> expected;
-    expected = {
-      {True,  False, False, False, False, False, True,  False},
-      {False, True,  False, True,  False, True,  False, False},
-      {False, False, True,  True,  True,  False, False, False},
-      {True,  True,  True,  False, True,  True,  True,  True },
-      {False, False, True,  True,  True,  False, False, False},
-      {False, True,  False, True,  False, True,  False, False},
-      {True,  False, False, True,  False, False, True,  False},
-      {False, False, False, True,  False, False, False, True }
-    };
-    EXPECT_EQ(matrix, expected);
-  }
+  matrix = queen.matrix(Piece::MatrixType::ATTACK, pos);
+  expected = {
+    {True,  False, False, False, False, False, True,  False},
+    {False, True,  False, True,  False, True,  False, False},
+    {False, False, True,  True,  True,  False, False, False},
+    {True,  True,  True,  False, True,  True,  True,  True },
+    {False, False, True,  True,  True,  False, False, False},
+    {False, True,  False, True,  False, True,  False, False},
+    {True,  False, False, True,  False, False, True,  False},
+    {False, False, False, True,  False, False, False, True }
+  };
+  EXPECT_EQ(matrix, expected);
 }
 
 TEST(Piece, Pawn) {
@@ -106,22 +94,60 @@ TEST(Piece, Pawn) {
     Piece{0, 0}
   };
   board[Y, X] = Piece{PAWN_ID, 1};
-  const Piece& pawn = board[Y, X];
+  const Piece& white_pawn = board[Y, X];
   const Piece::Place pos{
     .xy = {.x = X, .y = Y},
     .board = &board,
   };
-  {
-    auto matrix = pawn.matrix(Piece::MatrixType::MOVE, pos);
-    text_io::print(matrix);
-  }
+  auto matrix = white_pawn.matrix(Piece::MatrixType::MOVE, pos);
+  math::Matrix<byte> expected;
+  expected = {
+    {False, False, False, False},
+    {False, False, False, False},
+    {False, True,  False, False},
+    {False, False, False, False},
+  };
+  EXPECT_EQ(matrix, expected);
+
   board[Y + 1, X] = Piece{2, 1};
-  {
-    auto matrix = pawn.matrix(Piece::MatrixType::MOVE, pos);
-    text_io::print(matrix);
+  matrix = white_pawn.matrix(Piece::MatrixType::MOVE, pos);
+  expected = {
+    {False, False, False, False},
+    {False, False, False, False},
+    {False, False, False, False},
+    {False, False, False, False},
+  };
+  EXPECT_EQ(matrix, expected);
+
+  matrix = white_pawn.matrix(Piece::MatrixType::ATTACK, pos);
+  expected = {
+    {False, False, False, False},
+    {False, False, False, False},
+    {True,  False, True,  False},
+    {False, False, False, False},
+  };
+  EXPECT_EQ(matrix, expected);
+
+  board[Y + 1, X] = Piece{0, 0};
+  matrix = white_pawn.matrix(Piece::MatrixType::ATTACK, pos);
+  EXPECT_EQ(matrix, expected);
+
+  board[N - 1, X + 1] = Piece{PAWN_ID, 2};
+  const Piece& black_pawn = board[N - 1, X + 1];
+  matrix = black_pawn.matrix(
+    Piece::MatrixType::ATTACK,
+    Piece::Place{
+      .xy = {.x = X + 1, .y = N - 1},
+      .board = &board,
   }
-  {
-    auto matrix = pawn.matrix(Piece::MatrixType::ATTACK, pos);
-    text_io::print(matrix);
-  }
+  );
+  expected = {
+    {False, False, False, False},
+    {False, True,  False, True },
+    {False, False, False, False},
+    {False, False, False, False},
+  };
+  EXPECT_EQ(matrix, expected);
+  // TODO: add an en passant test
+  // TODO: add a double move test
 }

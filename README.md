@@ -48,6 +48,6 @@ Basically, store matrices "upside down" rather than "right side up"
 cmake lines to copy and paste
 ```
 cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=TRUE -S . -B release
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=true -S . -B release
 cmake --build build -j4
 ```

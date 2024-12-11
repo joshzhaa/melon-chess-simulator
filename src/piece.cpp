@@ -54,8 +54,44 @@ void rotate(math::Vector<int>& v, const math::Vector<int>& facing) {
   };
 }
 
-// whether Traits indicates that piece moves in same way it attacks
-[[nodiscard]] inline bool same_attack_move(const Traits& traits) { return traits.attacks.size() == 0; }
+[[nodiscard]] inline auto geometry(byte id, Piece::MatrixType type) -> const Geometry& {
+  const Traits& traits = Traits::db()[id];
+  // get geometry for attacking if attacks != moves (singalled by nonempty Geometry)
+  return type == Piece::MatrixType::ATTACK and traits.attacks.size() > 0 ? traits.attacks : traits.moves;
+}
+
+[[nodiscard]] inline auto facing(byte team) -> const math::Vector<int>& { return Team::db()[team].facing; }
+
+// modifies square for attack
+void mark_point(math::Vector<int>& square, math::Matrix<byte>& mask, const math::Vector<int>& orientation, const Piece::Place& place) {
+  square += orientation;
+  if (  // if piece at square is empty (id == 0)
+    auto piece = place.board->at(square.y, square.x);
+    piece and piece->id() == 0
+  ) {
+    mask_at(mask, square) = True;
+  }
+}
+
+// modifies square for attack
+void mark_ray(math::Vector<int>& square, math::Matrix<byte>& mask, const math::Vector<int>& orientation, const Piece::Place& place) {
+  std::optional<Piece> piece;
+  do {
+    mask_at(mask, square) = True;
+    square += orientation;
+    piece = place.board->at(square.y, square.x);
+  } while (piece and piece->id() == 0);
+  mask_at(mask, place.xy) = False;  // noop moves are not legal
+}
+
+void attack(const math::Vector<int>& square, math::Matrix<byte>& mask, byte team, const Piece::Place& place) {
+  if (  // if can capture, mark one more square in the right direction
+    auto piece = place.board->at(square.y, square.x);
+    piece and piece->team() != team
+  ) {
+    mask_at(mask, square) = True;
+  }
+}
 
 }  // namespace
 
@@ -63,47 +99,26 @@ namespace melon {
 
 [[nodiscard]] auto Piece::matrix(
   MatrixType type,  // flag to enable a capture for each geometry
-  Place pos
+  Place place
 ) const noexcept -> math::Matrix<byte> {
   using namespace std::literals;
-  assert_consistency(pos);
+  assert_consistency(place);
 
-  math::Matrix<byte> mask{pos.board->shape(), False};
-  const Traits& traits = Traits::db()[id()];
-  const math::Vector facing = Team::db()[team()].facing;
-  // get geometry for attacking if attacks != moves
-  const Geometry& geometry = type == MatrixType::ATTACK and not same_attack_move(traits) ? traits.attacks : traits.moves;
+  math::Matrix<byte> mask{place.board->shape(), False};
   // Geometry iterator produces a temporary, must bind by value
-  for (auto [shape, orientation] : geometry) {
-    math::Vector<int> square{pos.xy};  // copy
-    rotate(orientation, facing);
-    // handle each possible shape differently (only moves)
+  for (auto [shape, orientation] : geometry(id(), type)) {
+    math::Vector<int> square{place.xy};  // copy
+    rotate(orientation, facing(team()));
+    // handle only moves for each shape
     switch (shape) {
       case Shape::POINT:
-        square += orientation;
-        if (  // if piece at square is empty (id == 0)
-          auto piece = pos.board->at(square.y, square.x);
-          piece and piece->id() == 0
-        ) {
-          mask_at(mask, square) = True;
-        }
+        mark_point(square, mask, orientation, place);
         break;
       case Shape::RAY:
-        std::optional<Piece> piece;
-        do {  // NOLINT(cppcoreguidelines-avoid-do-while)
-          mask_at(mask, square) = True;
-          square += orientation;
-          piece = pos.board->at(square.y, square.x);
-        } while (piece and piece->id() == 0);
-        mask_at(mask, pos.xy) = False;  // noop moves are not legal
+        mark_ray(square, mask, orientation, place);
         break;
     }
-    if (  // if captures are enabled, mark one more square in the right direction
-      auto piece = pos.board->at(square.y, square.x);
-      type == MatrixType::ATTACK and piece and piece->team() != this->team()
-    ) {
-      mask_at(mask, square) = True;
-    }
+    if (type == MatrixType::ATTACK) attack(square, mask, team(), place);
   }
   return mask;
 }

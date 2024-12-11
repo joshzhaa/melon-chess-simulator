@@ -43,5 +43,7 @@ add_executable(test_piece test/piece.cpp src/cli/text_io)  # TODO: remove text_i
 target_link_libraries(test_piece GTest::gtest_main melon)
 target_include_directories(test_piece PUBLIC include)
 
+enable_testing()
 include(GoogleTest)
-gtest_discover_tests(test_math test_traits)
+gtest_discover_tests(test_math)
+gtest_discover_tests(test_piece)
