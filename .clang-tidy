@@ -2,7 +2,7 @@
 Checks: >
   abseil-*,
   bugprone-*,
-  cert-*,
+  cert-*-cpp,
   clang-analyzer-*,
   concurrency-*,
   cppcoreguidelines-*,
@@ -14,16 +14,18 @@ Checks: >
   performance-*,
   portability-*,
   readability-*,
+  -clang-analyzer-*osx*,
+  -*-braces-around-statements,
+  -google-objc-*,
   -cppcoreguidelines-avoid-do-while,
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -bugprone-easily-swappable-parameters,
   -google-build-using-namespace,
   -google-readability-todo,
-  -*-braces-around-statements,
   -readability-identifier-length,
   -modernize-use-trailing-return-type,
 
-HeaderFilterRegex: '.*include/melon/.*'
+HeaderFilterRegex: '.*'
 UseColor: true
 ...
 

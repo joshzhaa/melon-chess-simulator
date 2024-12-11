@@ -7,9 +7,9 @@
 #include <string>
 #include <utility>
 
+#include "melon/byte.hpp"
 #include "melon/constants.hpp"
 #include "melon/traits_json.hpp"
-#include "melon/util.hpp"
 
 namespace {
 

@@ -4,8 +4,8 @@
 
 #include <cstddef>
 
+#include "melon/byte.hpp"
 #include "melon/math/matrix.hpp"
-#include "melon/util.hpp"
 
 using namespace melon;
 

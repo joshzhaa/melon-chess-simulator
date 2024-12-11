@@ -4,9 +4,9 @@
 #include <cstddef>
 #include <utility>
 
+#include "melon/byte.hpp"
 #include "melon/math/matrix.hpp"
 #include "melon/piece.hpp"
-#include "melon/util.hpp"
 
 // parallel arrays describing default chess board configuration
 // these arrays imply an orientation for x y axes

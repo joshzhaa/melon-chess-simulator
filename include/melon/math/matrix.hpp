@@ -13,11 +13,10 @@
 namespace melon::math {
 
 template <typename T>
-class Matrix {  // NOLINT(*-special-member-functions)
+class Matrix {
   std::vector<std::vector<T>> elements;
 
 public:
-  Matrix() = default;
   /*
    * passing element by value, because you're about to copy T at least m*n times anyway
    * using explicit to prevent Matrix<T> m = {1, 2} which looks misleading for a Matrix
@@ -29,8 +28,12 @@ public:
   ) noexcept : elements{std::get<0>(shape), std::vector<T>(std::get<1>(shape), element)} {}
   // clang-format on
 
+  Matrix() = default;
+  Matrix(const Matrix& other) = delete;
+  Matrix& operator=(const Matrix& other) = delete;
   Matrix(Matrix&& other) = default;
   Matrix& operator=(Matrix&& other) = default;
+  ~Matrix() = default;
 
   /*
    * internally, matrices are stored "upside down" so they can be indexed by [y, x]

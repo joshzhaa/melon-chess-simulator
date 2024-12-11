@@ -4,13 +4,14 @@
 #include <cstddef>
 #include <string_view>
 
-#include "util.hpp"
+#include "byte.hpp"
 
 namespace melon::constants {
 
 template <typename T>
 consteval std::size_t maxof() {
-  return (1 << (sizeof(T) * 8)) - 1;  // NOLINT
+  // 8U is not a magic number, everyone knows it's the number of bits in a byte
+  return (1U << (sizeof(T) * 8U)) - 1;  // NOLINT(*-magic-numbers)
 }
 
 constexpr std::size_t MAX_PIECES = maxof<byte>();
@@ -122,7 +123,7 @@ constexpr std::string_view PAWN_TRAITS = R"(
 }
 )";
 
-// for some reason clangd believes this line won't compile
+// for some reason clangd@18.1.3 believes this line won't compile
 constexpr std::array STANDARD_TRAITS = {EMPTY_TRAITS, KING_TRAITS, QUEEN_TRAITS, ROOK_TRAITS, BISHOP_TRAITS, KNIGHT_TRAITS, PAWN_TRAITS};
 // constexpr std::string_view STANDARD_TRAITS[] = {EMPTY_TRAITS, KING_TRAITS, QUEEN_TRAITS, ROOK_TRAITS, BISHOP_TRAITS, KNIGHT_TRAITS, PAWN_TRAITS};
 

@@ -3,10 +3,10 @@
 
 #include <optional>
 
+#include "melon/byte.hpp"
 #include "melon/math/matrix.hpp"
 #include "melon/math/vector.hpp"
 #include "melon/piece.hpp"
-#include "melon/util.hpp"
 
 namespace melon {
 

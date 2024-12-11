@@ -9,8 +9,8 @@
 #include <vector>
 
 #include "constants.hpp"
+#include "melon/byte.hpp"
 #include "melon/math/vector.hpp"
-#include "melon/util.hpp"
 
 namespace melon {
 
