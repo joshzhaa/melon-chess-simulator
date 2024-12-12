@@ -12,4 +12,4 @@ constexpr byte False = 0;
 
 }  // namespace melon
 
-#endif // MELON_BYTE_HPP
+#endif  // MELON_BYTE_HPP

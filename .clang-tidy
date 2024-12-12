@@ -26,6 +26,9 @@ Checks: >
   -modernize-use-trailing-return-type,
 
 HeaderFilterRegex: '.*'
-UseColor: true
+
+CheckOptions:
+  - key: bugprone-exception-escape.IgnoredExceptions
+    value: std::bad_alloc
 ...
 

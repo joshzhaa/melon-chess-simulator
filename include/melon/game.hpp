@@ -19,6 +19,8 @@ enum class Mode : byte { SELECT, MOVE };
  *
  * for user interaction, there are 2 modes: "select" and "move"
  * first the user selects a piece to move, then chooses a square to move to
+ *
+ * invariant: boards.size() > 0
  */
 class Game {
   std::vector<math::Matrix<Piece>> boards;  // history of board states
@@ -35,9 +37,7 @@ public:
   // SELECT -> expecting a piece selection, MOVE -> expecting a move selection
   [[nodiscard]] Mode mode() const noexcept { return select ? Mode::MOVE : Mode::SELECT; }
   [[nodiscard]] std::size_t ply_count() const noexcept { return boards.size(); }
-  // highlight squares that the selected piece can move to
-  [[nodiscard]] bool highlight(std::size_t i, std::size_t j) const noexcept { return static_cast<bool>(moves[i, j]); }
-  void touch() noexcept;
+  void touch(math::Vector<int> square) noexcept;
 };
 
 }  // namespace melon

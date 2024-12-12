@@ -12,5 +12,7 @@ ExperimentalAutoDetectBinPacking: false
 AllowAllParametersOfDeclarationOnNextLine: false
 PackConstructorInitializers: CurrentLine
 ConstructorInitializerIndentWidth: 2
-AlignArrayOfStructures: Left 
+AlignArrayOfStructures: Left
+AlignOperands: DontAlign
+BreakBeforeBinaryOperators: All
 ...

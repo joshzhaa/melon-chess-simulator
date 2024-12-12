@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "melon/byte.hpp"
+#include "melon/cli/text_io.hpp"
 #include "melon/math/matrix.hpp"
 #include "melon/piece.hpp"
 
@@ -45,7 +46,7 @@ constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_TEAMS{
 namespace melon {
 // clang-format off
 Game::Game() noexcept : moves{{N, N}} {
-//clang-format on
+  // clang-format on
   math::Matrix<Piece> board{
     {N, N},
     Piece{0, 0}
@@ -58,6 +59,44 @@ Game::Game() noexcept : moves{{N, N}} {
     }
   }
   boards.push_back(std::move(board));
+}
+
+void Game::touch(math::Vector<int> square) noexcept {
+  auto piece = board().at(square.y, square.x);
+  if (not piece) {
+    select = std::nullopt;
+    return;
+  }
+  if (mode() == Mode::SELECT) {
+    auto move_matrix = piece->matrix(Piece::MatrixType::MOVE, {square, &board()});
+    auto attack_matrix = piece->matrix(Piece::MatrixType::ATTACK, {square, &board()});
+    auto [m, n] = board().shape();
+    for (std::size_t i = 0; i < m; ++i) {
+      for (std::size_t j = 0; j < n; ++j) {
+        bool can_move = static_cast<bool>(move_matrix[i, j]);
+        bool can_attack = static_cast<bool>(attack_matrix[i, j])  // due to vector<bool> limitations
+          and board()[i, j].id() != 0                             // non-empty
+          and board()[i, j].team() != piece->team();              // non-ally
+        moves[i, j] = static_cast<byte>(can_move or can_attack);
+      }
+    }
+    select = square;
+  } else {  // mode() == Mode::MOVE
+    if (  // if square has been flagged as being able to be moved to
+      auto is_flagged = moves.at(square.y, square.x);
+      is_flagged and static_cast<bool>(*is_flagged)
+    ) {
+      math::Vector<std::size_t> from{static_cast<std::size_t>(select->x), static_cast<std::size_t>(select->y)};
+      math::Vector<std::size_t> to{static_cast<std::size_t>(square.x), static_cast<std::size_t>(square.y)};
+      text_io::print(from);
+      text_io::print(to);
+      board()[to.y, to.x] = board()[from.y, from.x];
+      board()[from.y, from.x] = Piece{0, 0};
+      // TODO: trigger effects
+    }
+    select = std::nullopt;
+  }
+  text_io::print(moves);
 }
 
 }  // namespace melon

@@ -27,6 +27,12 @@ void print(const math::Matrix<T>& matrix) noexcept {  // NOLINT(bugprone-excepti
   std::print("\n");
 }
 
+// TODO: remove this
+template <typename T>
+void print(const math::Vector<T>& vector) noexcept {  // NOLINT(bugprone-exception-escape)
+  std::println("({}, {})", vector.x, vector.y);
+}
+
 }  // namespace melon::text_io
 
 #endif // MELON_CLI_TEXT_IO_HPP
