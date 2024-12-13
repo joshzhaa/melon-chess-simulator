@@ -1,6 +1,6 @@
+#include <format>
+#include <ios>
 #include <iostream>
-#include <ostream>
-#include <ranges>
 
 #include "melon/cli/text_io.hpp"
 #include "melon/game.hpp"
@@ -29,30 +29,24 @@ struct LoudObject{
 };
 // NOLINTEND(*-named-parameter, readability-convert-member-functions-to-static)
 
-int main() {  // NOLINT(bugprone-exception-escape)
+int main() {
+  std::ios::sync_with_stdio(false);
   Game game;
+  int x = 0;
+  int y = 0;
   std::cout << text_io::serialize(game.board(), true) << '\n';
-  game.touch({3, 1});
-  game.touch({3, 2});
-  std::cout << text_io::serialize(game.board(), true) << '\n';
-  game.touch({3, 1});
-  game.touch({3, 2});
-
-  const auto even = [](int i){ return i % 2 == 0; };
-  const auto square = [](int i){ return i * i; };
-  const auto ints = {1, 2, 3 ,4 ,5 ,6, 7, 8};
-  for (int i : ints | std::views::filter(even) | std::views::transform(square)) {
-    std::cout << i << '\n';
+  std::vector<math::Vector<int>> inputs;
+  while (std::cin >> x >> y) {
+    inputs.emplace_back(x, y);
+    game.touch({x, y});
+    if (game.mode() == Game::Mode::SELECT) {
+      std::cout << text_io::serialize(game.board(), true) << '\n';
+    } else {
+      text_io::print(game.move_mask());
+    }
   }
-
-  const std::vector<math::Vector<int>> inputs = {
-    {4, 1},
-    {4, 2},
-    {5, 1},
-    {5, 2},
-    {6, 1},
-    {6, 2},
-  };
-  game.play(inputs);
-  std::cout << text_io::serialize(game.board(), true) << '\n';
+  for (const auto [left, right] : inputs) {
+    std::cout << std::format("{} {}\n", left, right);
+  }
+  std::cout << text_io::serialize(game.board(), false) << '\n';
 }

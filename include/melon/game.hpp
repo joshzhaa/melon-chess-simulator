@@ -10,8 +10,6 @@
 
 namespace melon {
 
-enum class Mode : byte { SELECT, MOVE };
-
 /*
  * class that defines game state
  * some chess rules require the history of the game to be considered
@@ -26,18 +24,21 @@ class Game {
   std::vector<math::Matrix<Piece>> boards;  // history of board states
   math::Matrix<byte> mask;                  // value only meaningful in Mode::MOVE, byte to avoid vector<bool>
   std::optional<math::Vector<int>> select;  // null -> no selection ("select mode")
-  int padding{};                            // TODO: remove
+  byte teams; // number of teams in this game
 
 public:
   // Constructs Game at initial state of standard chess game
   Game() noexcept;
   // the current board is the last Matrix in boards
-  [[nodiscard]] auto board() noexcept -> melon::math::Matrix<melon::Piece>& { return boards.back(); }
-  [[nodiscard]] auto board() const noexcept -> const melon::math::Matrix<melon::Piece>& { return boards.back(); }
+  [[nodiscard]] auto board() noexcept -> math::Matrix<Piece>& { return boards.back(); }
+  [[nodiscard]] auto board() const noexcept -> const math::Matrix<Piece>& { return boards.back(); }
+  [[nodiscard]] auto move_mask() const noexcept -> const math::Matrix<byte>& { return mask; }
 
+  enum class Mode : byte { SELECT, MOVE };
   // SELECT -> expecting a piece selection, MOVE -> expecting a move selection
   [[nodiscard]] Mode mode() const noexcept { return select ? Mode::MOVE : Mode::SELECT; }
   [[nodiscard]] std::size_t ply_count() const noexcept { return boards.size(); }
+  [[nodiscard]] byte turn() const noexcept { return (ply_count() - 1) % teams + 1; }
 
   /*
    * interact with a square

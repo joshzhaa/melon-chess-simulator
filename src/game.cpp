@@ -44,7 +44,7 @@ constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_TEAMS{
 
 namespace melon {
 // clang-format off
-Game::Game() noexcept : mask{{N, N}} {
+Game::Game() noexcept : mask{{N, N}}, teams{2} {
   // clang-format on
   math::Matrix<Piece> board{
     {N, N},

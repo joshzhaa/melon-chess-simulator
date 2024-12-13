@@ -95,14 +95,25 @@ inline void attack(const math::Vector<int>& square, math::Matrix<byte>& mask, by
 }
 
 // @@@ Actions @@@
-void en_passant(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place);
-void castle(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place);
-void double_move(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place) {
+void en_passant(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place) noexcept {
+  if (type == Piece::MatrixType::ATTACK) return;
+}
+
+void castle(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place) noexcept {
   if (type == Piece::MatrixType::ATTACK) return;
   const auto& board = *place.board;
-  const auto& pawn = board.at(place.xy.y, place.xy.x);
+  const auto king = board.at(place.xy.y, place.xy.x);
+  assert(king);
+  if (king->moved()) return;
+}
+
+void double_step(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place) noexcept {
+  if (type == Piece::MatrixType::ATTACK) return;
+  const auto& board = *place.board;
+  const auto pawn = board.at(place.xy.y, place.xy.x);
   assert(pawn);
-  // if both squares ahead are empty then double move it possible
+  if (pawn->moved()) return;
+  // if both squares ahead are empty then double move is possible
   math::Vector<int> one_ahead = place.xy + facing(pawn->team());
   if (
     auto piece = board.at(one_ahead.y, one_ahead.x);
@@ -113,6 +124,26 @@ void double_move(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::
     auto piece = board.at(two_ahead.y, two_ahead.x);
     not piece or not piece->empty()
   ) return;
+  // preconditions for double move are guaranteed satisfied
+  mask_at(mask, two_ahead) = True;
+}
+
+void exec_actions(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place) noexcept {
+  const auto& piece = place.board->at(place.xy.y, place.xy.x);
+  assert(piece);
+  for (const auto& action : Traits::db()[piece->id()].actions) {
+    switch (action) {
+      case melon::Action::EN_PASSANT:
+        en_passant(mask, type, place);
+        break;
+      case melon::Action::CASTLE:
+        castle(mask, type, place);
+        break;
+      case melon::Action::DOUBLE_STEP:
+        double_step(mask, type, place);
+        break;
+    }
+  }
 }
 
 }  // namespace
@@ -141,6 +172,7 @@ namespace melon {
         break;
     }
     if (type == MatrixType::ATTACK) attack(square, mask, team(), place);
+    exec_actions(mask, type, place);
   }
   return mask;
 }
