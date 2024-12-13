@@ -5,7 +5,6 @@
 #include <utility>
 
 #include "melon/byte.hpp"
-#include "melon/cli/text_io.hpp"
 #include "melon/math/matrix.hpp"
 #include "melon/piece.hpp"
 
@@ -45,7 +44,7 @@ constexpr std::array<std::array<melon::byte, N>, N> DEFAULT_TEAMS{
 
 namespace melon {
 // clang-format off
-Game::Game() noexcept : moves{{N, N}} {
+Game::Game() noexcept : mask{{N, N}} {
   // clang-format on
   math::Matrix<Piece> board{
     {N, N},
@@ -77,26 +76,28 @@ void Game::touch(math::Vector<int> square) noexcept {
         bool can_attack = static_cast<bool>(attack_matrix[i, j])  // due to vector<bool> limitations
           and board()[i, j].id() != 0                             // non-empty
           and board()[i, j].team() != piece->team();              // non-ally
-        moves[i, j] = static_cast<byte>(can_move or can_attack);
+        mask[i, j] = static_cast<byte>(can_move or can_attack);
       }
     }
     select = square;
   } else {  // mode() == Mode::MOVE
     if (  // if square has been flagged as being able to be moved to
-      auto is_flagged = moves.at(square.y, square.x);
+      auto is_flagged = mask.at(square.y, square.x);
       is_flagged and static_cast<bool>(*is_flagged)
     ) {
       math::Vector<std::size_t> from{static_cast<std::size_t>(select->x), static_cast<std::size_t>(select->y)};
       math::Vector<std::size_t> to{static_cast<std::size_t>(square.x), static_cast<std::size_t>(square.y)};
-      text_io::print(from);
-      text_io::print(to);
-      board()[to.y, to.x] = board()[from.y, from.x];
-      board()[from.y, from.x] = Piece{0, 0};
+      board()[to.y, to.x] = board()[from.y, from.x]; // TODO: move if Piece becomes non-trivial
+      board()[from.y, from.x].destruct();
       // TODO: trigger effects
+      board()[to.y, to.x].move();
     }
     select = std::nullopt;
   }
-  text_io::print(moves);
+}
+
+void Game::play(const std::vector<math::Vector<int>>& inputs) noexcept {
+  for (const math::Vector<int>& input : inputs) touch(input);
 }
 
 }  // namespace melon

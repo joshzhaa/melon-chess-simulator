@@ -22,7 +22,9 @@ public:
   [[nodiscard]] byte id() const noexcept { return id_; }
   [[nodiscard]] byte team() const noexcept { return team_; }
   [[nodiscard]] bool moved() const noexcept { return moved_; }
+  [[nodiscard]] bool empty() const noexcept { return id_ == 0; }
   void move() noexcept { moved_ = true; }
+  void destruct() noexcept { *this = Piece{0, 0}; }
 
   enum class MatrixType : byte { ATTACK, MOVE };
 
@@ -32,6 +34,10 @@ public:
     const math::Matrix<Piece>* board;  // Place is not user-facing, so nullptr only if programmer error
   };
 
+  /*
+   * matrix of board squares this Piece can move to
+   * derived from "moves" or "attacks" depending on MatrixType
+   */
   [[nodiscard]] auto matrix(
     MatrixType type,  // flag to enable a capture for each geometry
     Place place

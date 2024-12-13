@@ -14,6 +14,7 @@ namespace {
 
 using namespace melon;
 
+// @@@ Core Piece Logic @@@
 [[nodiscard]] byte& mask_at(math::Matrix<byte>& mask, math::Vector<int> pos) noexcept {
   assert(mask.at(pos.y, pos.x));  // programmer must bounds check this function
   auto xu = static_cast<std::size_t>(pos.x);
@@ -37,7 +38,7 @@ void assert_consistency(const Piece::Place& pos) noexcept {
  * "facing" must be a unit vector.
  * uses a rotation matrix that transforms "up" to "facing"
  */
-void rotate(math::Vector<int>& v, const math::Vector<int>& facing) {
+void rotate(math::Vector<int>& v, const math::Vector<int>& facing) noexcept {
   constexpr math::Vector<int> up{.x = 0, .y = 1};
   const auto [x1, y1] = up;
   const auto [x2, y2] = facing;
@@ -54,16 +55,16 @@ void rotate(math::Vector<int>& v, const math::Vector<int>& facing) {
   };
 }
 
-[[nodiscard]] inline auto geometry(byte id, Piece::MatrixType type) -> const Geometry& {
+[[nodiscard]] inline auto geometry(byte id, Piece::MatrixType type) noexcept -> const Geometry& {
   const Traits& traits = Traits::db()[id];
   // get geometry for attacking if attacks != moves (singalled by nonempty Geometry)
   return type == Piece::MatrixType::ATTACK and traits.attacks.size() > 0 ? traits.attacks : traits.moves;
 }
 
-[[nodiscard]] inline auto facing(byte team) -> const math::Vector<int>& { return Team::db()[team].facing; }
+[[nodiscard]] inline auto facing(byte team) noexcept -> const math::Vector<int>& { return Team::db()[team].facing; }
 
 // modifies square for attack
-void mark_point(math::Vector<int>& square, math::Matrix<byte>& mask, const math::Vector<int>& orientation, const Piece::Place& place) {
+void mark_point(math::Vector<int>& square, math::Matrix<byte>& mask, const math::Vector<int>& orientation, const Piece::Place& place) noexcept {
   square += orientation;
   if (  // if piece at square is empty (id == 0)
     auto piece = place.board->at(square.y, square.x);
@@ -74,7 +75,7 @@ void mark_point(math::Vector<int>& square, math::Matrix<byte>& mask, const math:
 }
 
 // modifies square for attack
-void mark_ray(math::Vector<int>& square, math::Matrix<byte>& mask, const math::Vector<int>& orientation, const Piece::Place& place) {
+void mark_ray(math::Vector<int>& square, math::Matrix<byte>& mask, const math::Vector<int>& orientation, const Piece::Place& place) noexcept {
   std::optional<Piece> piece;
   do {
     mask_at(mask, square) = True;
@@ -84,13 +85,34 @@ void mark_ray(math::Vector<int>& square, math::Matrix<byte>& mask, const math::V
   mask_at(mask, place.xy) = False;  // noop moves are not legal
 }
 
-void attack(const math::Vector<int>& square, math::Matrix<byte>& mask, byte team, const Piece::Place& place) {
+inline void attack(const math::Vector<int>& square, math::Matrix<byte>& mask, byte team, const Piece::Place& place) noexcept {
   if (  // if can capture, mark one more square in the right direction
     auto piece = place.board->at(square.y, square.x);
     piece and piece->team() != team
   ) {
     mask_at(mask, square) = True;
   }
+}
+
+// @@@ Actions @@@
+void en_passant(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place);
+void castle(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place);
+void double_move(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place) {
+  if (type == Piece::MatrixType::ATTACK) return;
+  const auto& board = *place.board;
+  const auto& pawn = board.at(place.xy.y, place.xy.x);
+  assert(pawn);
+  // if both squares ahead are empty then double move it possible
+  math::Vector<int> one_ahead = place.xy + facing(pawn->team());
+  if (
+    auto piece = board.at(one_ahead.y, one_ahead.x);
+    not piece or not piece->empty()
+  ) return;
+  math::Vector<int> two_ahead = one_ahead + facing(pawn->team());
+  if (
+    auto piece = board.at(two_ahead.y, two_ahead.x);
+    not piece or not piece->empty()
+  ) return;
 }
 
 }  // namespace

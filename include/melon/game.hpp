@@ -24,7 +24,7 @@ enum class Mode : byte { SELECT, MOVE };
  */
 class Game {
   std::vector<math::Matrix<Piece>> boards;  // history of board states
-  math::Matrix<byte> moves;                 // value only meaningful in Mode::MOVE, byte to avoid vector<bool>
+  math::Matrix<byte> mask;                  // value only meaningful in Mode::MOVE, byte to avoid vector<bool>
   std::optional<math::Vector<int>> select;  // null -> no selection ("select mode")
   int padding{};                            // TODO: remove
 
@@ -34,10 +34,21 @@ public:
   // the current board is the last Matrix in boards
   [[nodiscard]] auto board() noexcept -> melon::math::Matrix<melon::Piece>& { return boards.back(); }
   [[nodiscard]] auto board() const noexcept -> const melon::math::Matrix<melon::Piece>& { return boards.back(); }
+
   // SELECT -> expecting a piece selection, MOVE -> expecting a move selection
   [[nodiscard]] Mode mode() const noexcept { return select ? Mode::MOVE : Mode::SELECT; }
   [[nodiscard]] std::size_t ply_count() const noexcept { return boards.size(); }
+
+  /*
+   * interact with a square
+   * touch out of bounds -> resets to Mode::SELECT
+   * touch if Mode::SELECT -> marks this->mask with possible moves for board[this->select] to take
+   * touch if Mode::MOVE -> moves piece at this->select if marked in this->mask, resets to Mode::SELECT
+   */
   void touch(math::Vector<int> square) noexcept;
+
+  // touch a series of squares
+  void play(const std::vector<math::Vector<int>>& inputs) noexcept;
 };
 
 }  // namespace melon

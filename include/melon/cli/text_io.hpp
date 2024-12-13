@@ -1,7 +1,7 @@
 #ifndef MELON_CLI_TEXT_IO_HPP
 #define MELON_CLI_TEXT_IO_HPP
 
-#include <print>
+// #include <print>
 #include <string>
 
 #include "melon/piece.hpp"
@@ -14,6 +14,7 @@ std::string text(const Piece& piece) noexcept;  // ascii text representation of 
 std::string serialize(const math::Matrix<Piece>& board, bool use_icons = true) noexcept;
 
 // TODO: remove this
+/*
 template <typename T>
 void print(const math::Matrix<T>& matrix) noexcept {  // NOLINT(bugprone-exception-escape)
   auto [m, n] = matrix.shape();
@@ -28,10 +29,12 @@ void print(const math::Matrix<T>& matrix) noexcept {  // NOLINT(bugprone-excepti
 }
 
 // TODO: remove this
+
 template <typename T>
 void print(const math::Vector<T>& vector) noexcept {  // NOLINT(bugprone-exception-escape)
   std::println("({}, {})", vector.x, vector.y);
 }
+*/
 
 }  // namespace melon::text_io
 

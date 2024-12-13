@@ -3,10 +3,10 @@ Piece behavior is configured through data (JSON) instead of through source code
  * enables user to edit piece behavior without recompiling program
 
 No C++ exceptions (emscripten limitation)
- * emscripten.org portability guidelines: "Code that compiles but might run slowly"  
+ * emscripten.org portability guidelines: "Code that compiles but might run slowly"
  "C++ Exceptions. In JavaScript such code generally makes the JavaScript engine turn off various optimizations.
  For that reason exceptions are turned off by default in -O1 and above.
- To re-enable them, run *emcc* with ```-sDISABLE_EXCEPTION_CATCHING=0```"
+ To re-enable them, run *emcc* with `-sDISABLE_EXCEPTION_CATCHING=0`"
  * most functions will terminate if they run out of memory (bad_alloc), though I would probably argue that most of the time,
  this is the correct behavior (how would a program recover even in theory if it cant allocate even tiny amounts of memory?)
 
@@ -29,12 +29,15 @@ Each piece has "Traits" defined in a JSON
 A Trait is global for each Piece's id
 The "moves" and "attacks" fields are separate because of pawns
 The "attacks" field is for highlighting captures and calculating whether a square is defended by an opponent (for K)
+"actions" are moves that follow special rules when some condition is triggered (handled at the Piece level)
+  - an action is either a "move" or an "attack" (defines K threat rules); all standard actions are moves
+"effects" occur automatically when some condition is triggered (handled at the Game level)
 
-Board layout: stacked 2D ```std::vector```
-standardly, white is ```std::vector[0]``` and ```std::vector[1]```
-standardly, black is ```std::vector[6]``` and ```std::vector[7]```
-Basically, the board is 1st quadrant Z2, which is convenient for conceptualizing ```melon::math::Vector```
-However, it makes printing the 2D ```std::vector``` the usual way misleading, as the usual way implies the board is 4th quadrant Z2.
+Board layout: stacked 2D `std::vector`
+standardly, white is `std::vector[0]` and `std::vector[1]`
+standardly, black is `std::vector[6]` and `std::vector[7]`
+Basically, the board is 1st quadrant Z2, which is convenient for conceptualizing `melon::math::Vector`
+However, it makes printing the 2D `std::vector` the usual way misleading, as the usual way implies the board is 4th quadrant Z2.
 Verdict: printing is less important than the keeping the board in the 1st quadrant.
 Basically, store matrices "upside down" rather than "right side up"
 
