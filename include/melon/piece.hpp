@@ -28,15 +28,19 @@ public:
 
   enum class MatrixType : byte { ATTACK, MOVE };
 
-  // this Piece is at (*board)[y, x]
+  // defines the context that this Piece exists in
   struct Place {
-    math::Vector<int> xy;
+    math::Vector<int> xy;              // this Piece is at (*board)[y, x]
     const math::Matrix<Piece>* board;  // Place is not user-facing, so nullptr only if programmer error
+    const std::vector<std::tuple<math::Vector<int>, math::Vector<int>>>* move_history;  // for en_passant
   };
 
   /*
    * matrix of board squares this Piece can move to
    * derived from "moves" or "attacks" depending on MatrixType
+   * moves and attacks mark squares as 1 (melon::True)
+   * squares that this Piece can't move to are marked as 0 (melon::False)
+   * special actions mark square with their corresponding melon::Action byte value
    */
   [[nodiscard]] auto matrix(
     MatrixType type,  // flag to enable a capture for each geometry

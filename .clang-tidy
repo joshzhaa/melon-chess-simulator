@@ -25,7 +25,7 @@ Checks: >
   -readability-identifier-length,
   -modernize-use-trailing-return-type,
 
-HeaderFilterRegex: '.*'
+HeaderFilterRegex: '.*melon.*'
 
 CheckOptions:
   - key: bugprone-exception-escape.IgnoredExceptions

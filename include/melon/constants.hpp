@@ -101,7 +101,7 @@ constexpr std::string_view KNIGHT_TRAITS = R"(
     { "orientation": [ -1, -2 ], "shape": "point" },
     { "orientation": [ -2, -1 ], "shape": "point" },
     { "orientation": [ -2, 1 ], "shape": "point" },
-    { "orientation": [ -1, -2 ], "shape": "point" }
+    { "orientation": [ -1, 2 ], "shape": "point" }
   ],
   "attacks": [],
   "actions": [],

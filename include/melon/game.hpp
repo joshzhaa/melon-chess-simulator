@@ -10,6 +10,8 @@
 
 namespace melon {
 
+using Move = std::tuple<math::Vector<int>, math::Vector<int>>;
+
 /*
  * class that defines game state
  * some chess rules require the history of the game to be considered
@@ -20,11 +22,15 @@ namespace melon {
  *
  * invariant: boards.size() > 0
  */
-class Game {
+class Game {                                // NOLINT(*-padded)
   std::vector<math::Matrix<Piece>> boards;  // history of board states
+  std::vector<Move> moves;                  // history of piece moves
   math::Matrix<byte> mask;                  // value only meaningful in Mode::MOVE, byte to avoid vector<bool>
   std::optional<math::Vector<int>> select;  // null -> no selection ("select mode")
-  byte teams; // number of teams in this game
+  byte teams{};                             // number of teams in this game
+
+  void handle_select(math::Vector<int> square);  // TODO: refactor touch to use helpers
+  void handle_move(math::Vector<int> square);
 
 public:
   // Constructs Game at initial state of standard chess game
@@ -33,12 +39,14 @@ public:
   [[nodiscard]] auto board() noexcept -> math::Matrix<Piece>& { return boards.back(); }
   [[nodiscard]] auto board() const noexcept -> const math::Matrix<Piece>& { return boards.back(); }
   [[nodiscard]] auto move_mask() const noexcept -> const math::Matrix<byte>& { return mask; }
+  [[nodiscard]] auto move_history() const noexcept -> const std::vector<Move>& { return moves; }
+  [[nodiscard]] auto board_history() const noexcept -> const std::vector<math::Matrix<Piece>>& { return boards; }
 
   enum class Mode : byte { SELECT, MOVE };
   // SELECT -> expecting a piece selection, MOVE -> expecting a move selection
   [[nodiscard]] Mode mode() const noexcept { return select ? Mode::MOVE : Mode::SELECT; }
   [[nodiscard]] std::size_t ply_count() const noexcept { return boards.size(); }
-  [[nodiscard]] byte turn() const noexcept { return (ply_count() - 1) % teams + 1; }
+  [[nodiscard]] byte turn() const noexcept { return 1 + ((ply_count() - 1) % teams); }
 
   /*
    * interact with a square

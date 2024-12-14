@@ -1,9 +1,12 @@
 #include <format>
+#include <functional>
 #include <ios>
 #include <iostream>
+#include <vector>
 
 #include "melon/cli/text_io.hpp"
 #include "melon/game.hpp"
+#include "melon/math/vector.hpp"
 
 using namespace melon;
 
@@ -38,7 +41,7 @@ int main() {
   std::vector<math::Vector<int>> inputs;
   while (std::cin >> x >> y) {
     inputs.emplace_back(x, y);
-    game.touch({x, y});
+    game.touch({.x=x, .y=y});
     if (game.mode() == Game::Mode::SELECT) {
       std::cout << text_io::serialize(game.board(), true) << '\n';
     } else {
@@ -49,4 +52,5 @@ int main() {
     std::cout << std::format("{} {}\n", left, right);
   }
   std::cout << text_io::serialize(game.board(), false) << '\n';
+  std::cout << sizeof(std::function<void(int)>) << '\n';
 }

@@ -3,11 +3,16 @@
 #include <gtest/gtest.h>
 
 #include <cstddef>
+#include <tuple>
+#include <vector>
 
 #include "melon/byte.hpp"
 #include "melon/math/matrix.hpp"
+#include "melon/math/vector.hpp"
 
 using namespace melon;
+
+const std::vector<std::tuple<math::Vector<int>, math::Vector<int>>> empty;
 
 TEST(Piece, Queen) {
   // set up board with single Q in the middle
@@ -23,6 +28,7 @@ TEST(Piece, Queen) {
   const Piece::Place pos{
     .xy = {.x = X, .y = Y},
     .board = &board,
+    .move_history = &empty,
   };
   // check move matrix from single Q
   auto matrix = queen.matrix(Piece::MatrixType::MOVE, pos);
@@ -98,6 +104,7 @@ TEST(Piece, Pawn) {
   const Piece::Place pos{
     .xy = {.x = X, .y = Y},
     .board = &board,
+    .move_history = &empty,
   };
   auto matrix = white_pawn.matrix(Piece::MatrixType::MOVE, pos);
   math::Matrix<byte> expected;
@@ -139,6 +146,7 @@ TEST(Piece, Pawn) {
     Piece::Place{
       .xy = {.x = X + 1, .y = N - 1},
       .board = &board,
+      .move_history = &empty,
   }
   );
   expected = {
@@ -148,6 +156,4 @@ TEST(Piece, Pawn) {
     {False, False, False, False},
   };
   EXPECT_EQ(matrix, expected);
-  // TODO: add an en passant test
-  // TODO: add a double move test
 }

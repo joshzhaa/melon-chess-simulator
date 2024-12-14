@@ -47,13 +47,18 @@ std::string serialize(const math::Matrix<Piece>& board, bool use_icons) noexcept
   auto [m, n] = board.shape();
   std::string result;
   for (std::size_t i = m; i > 0; --i) {  // i is unsigned -> can't be < 0
+    result.append(std::format("{} ", i - 1));
     for (std::size_t j = 0; j < n; ++j) {
       const auto& piece = board[i - 1, j];
-      result.append(use_icons ? icon(piece) : text(piece));
-      result.push_back(' ');
+      result.append(std::format("{} ", use_icons ? icon(piece) : text(piece)));
     }
     result.back() = '\n';
   }
+  result.append("  ");
+  for (std::size_t j = 0; j < n; ++j) {
+    result.append(std::format("{} ", j));
+  }
+  result.back() = '\n';
   return result;
 }
 

@@ -14,7 +14,8 @@
 
 namespace melon {
 
-enum class Action : byte { EN_PASSANT, CASTLE, DOUBLE_STEP };
+// Piece::matrix will set values to Action so Game can detect when an action was taken
+enum class Action : byte { EN_PASSANT = 2, CASTLE = 3, DOUBLE_STEP = 4 };
 enum class Effect : byte { EN_PASSANT, CASTLE, PROMOTION, CHECK, CHECKMATE };
 enum class Shape : byte { POINT, RAY };
 

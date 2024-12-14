@@ -7,5 +7,6 @@ CompileFlags:
     -Wno-c++98-compat,
     -Wno-c++20-compat,
     -Wno-pre-c++20-compat-pedantic,
+    -I ./build/_deps/json-src/include/,
   ]
   Compiler: /opt/homebrew/opt/llvm@18/bin/clang++
