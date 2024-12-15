@@ -107,7 +107,7 @@ void en_passant(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::P
   auto left = up;
   rotate(left, {.x = -1, .y = 0});
   auto right = up;
-  rotate(right, {.x = 1, .y = 0});  // now right
+  rotate(right, {.x = 1, .y = 0});
 
   auto recent_double_step = [&board, &move_history](const math::Vector<int>& pos) {
     auto piece = board.at(pos.y, pos.x);
@@ -115,8 +115,9 @@ void en_passant(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::P
     if (  // has en_passant effect == is pawn
       const auto& effects = Traits::db()[piece->id()].effects;
       not std::ranges::contains(effects, Effect::EN_PASSANT)
-    )
-      return false;
+    ) return false;
+
+    if (move_history.empty()) return false;
     const auto& [from, to] = move_history.back();
     if (to != pos) return false;
     auto displacement = to - from;
@@ -124,10 +125,10 @@ void en_passant(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::P
     return square_dist == 4;
   };
 
-  if (recent_double_step(left)) {
-    mask_at(mask, left + up) = static_cast<byte>(Action::EN_PASSANT);
-  } else if (recent_double_step(right)) {  // impossible for both if to trigger
-    mask_at(mask, right + up) = static_cast<byte>(Action::EN_PASSANT);
+  if (recent_double_step(place.xy + left)) {
+    mask_at(mask, place.xy + left + up) = static_cast<byte>(Action::EN_PASSANT);
+  } else if (recent_double_step(place.xy + right)) {  // impossible for both ifs to trigger
+    mask_at(mask, place.xy + right + up) = static_cast<byte>(Action::EN_PASSANT);
   }
 }
 

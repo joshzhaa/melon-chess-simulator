@@ -1,5 +1,5 @@
 #include <format>
-#include <functional>
+#include <fstream>
 #include <ios>
 #include <iostream>
 #include <vector>
@@ -32,25 +32,29 @@ struct LoudObject{
 };
 // NOLINTEND(*-named-parameter, readability-convert-member-functions-to-static)
 
-int main() {
-  std::ios::sync_with_stdio(false);
+static void console_game(std::ostream& os, std::istream& is) {
   Game game;
   int x = 0;
   int y = 0;
-  std::cout << text_io::serialize(game.board(), true) << '\n';
+  os << text_io::serialize(game.board(), true) << '\n';
   std::vector<math::Vector<int>> inputs;
-  while (std::cin >> x >> y) {
+  while (is >> x >> y) {
     inputs.emplace_back(x, y);
     game.touch({.x=x, .y=y});
     if (game.mode() == Game::Mode::SELECT) {
-      std::cout << text_io::serialize(game.board(), true) << '\n';
+      os << text_io::serialize(game.board(), true) << '\n';
     } else {
       text_io::print(game.move_mask());
     }
   }
   for (const auto [left, right] : inputs) {
-    std::cout << std::format("{} {}\n", left, right);
+    os << std::format("{} {}\n", left, right);
   }
-  std::cout << text_io::serialize(game.board(), false) << '\n';
-  std::cout << sizeof(std::function<void(int)>) << '\n';
+  os << text_io::serialize(game.board(), false) << '\n';
+}
+
+int main() {
+  // std::ifstream file{"ep-input.txt"};
+  // interactive_game(std::cout,  file);
+  console_game(std::cout, std::cin);
 }
