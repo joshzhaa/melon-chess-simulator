@@ -112,10 +112,9 @@ void en_passant(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::P
   auto recent_double_step = [&board, &move_history](const math::Vector<int>& pos) {
     auto piece = board.at(pos.y, pos.x);
     if (not piece) return false;
-    if (  // has en_passant effect == is pawn
-      const auto& effects = Traits::db()[piece->id()].effects;
-      not std::ranges::contains(effects, Effect::EN_PASSANT)
-    ) return false;
+    const auto& effects = Traits::db()[piece->id()].effects;
+    // if has en_passant effect, then it's a "pawn"
+    if (not std::ranges::contains(effects, Effect::EN_PASSANT)) return false;
 
     if (move_history.empty()) return false;
     const auto& [from, to] = move_history.back();
@@ -145,11 +144,9 @@ void castle(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place
     math::Vector<int> origin = place.xy;  // copy
     auto piece = board.at(origin.y, origin.x);
     while (piece) {
-      if ( // if piece has the CASTLE effect (i.e. is a rook)
-        const auto& effects = Traits::db()[piece->id()].effects;
-        std::ranges::contains(effects, Effect::CASTLE)
-      )
-        return origin;
+      const auto& effects = Traits::db()[piece->id()].effects;
+      // if piece has the CASTLE effect (i.e. is a rook)
+      if (std::ranges::contains(effects, Effect::CASTLE)) return origin;
       origin += offset;
       piece = board.at(origin.y, origin.x);
     }
@@ -196,13 +193,13 @@ void exec_actions(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece:
   assert(piece);
   for (const auto& action : Traits::db()[piece->id()].actions) {
     switch (action) {
-      case melon::Action::EN_PASSANT:
+      case Action::EN_PASSANT:
         en_passant(mask, type, place);
         break;
-      case melon::Action::CASTLE:
+      case Action::CASTLE:
         castle(mask, type, place);
         break;
-      case melon::Action::DOUBLE_STEP:
+      case Action::DOUBLE_STEP:
         double_step(mask, type, place);
         break;
     }
@@ -215,7 +212,7 @@ namespace melon {
 
 [[nodiscard]] auto Piece::matrix(
   MatrixType type,  // flag to enable a capture for each geometry
-  Place place
+  const Place& place
 ) const noexcept -> math::Matrix<byte> {
   using namespace std::literals;
   assert_consistency(place);
@@ -235,8 +232,8 @@ namespace melon {
         break;
     }
     if (type == MatrixType::ATTACK) attack(square, mask, team(), place);
-    exec_actions(mask, type, place);
   }
+  exec_actions(mask, type, place);
   return mask;
 }
 

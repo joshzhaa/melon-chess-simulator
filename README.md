@@ -31,6 +31,7 @@ The "moves" and "attacks" fields are separate because of pawns
 The "attacks" field is for highlighting captures and calculating whether a square is defended by an opponent (for K)
 "actions" are moves that follow special rules when some condition is triggered (handled at the Piece level)
   - an action is either a "move" or an "attack" (defines K threat rules); all standard actions are moves
+  - pieces declare whether the move, if taken, would be a regular move/attack (= 1) or an action (> 1)
 "effects" occur automatically when some condition is triggered (handled at the Game level)
 
 Board layout: stacked 2D `std::vector`

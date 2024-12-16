@@ -10,6 +10,8 @@
 #include <optional>
 #include <vector>
 
+#include "vector.hpp"
+
 namespace melon::math {
 
 template <typename T>
@@ -64,6 +66,10 @@ public:
   // apparently vector<bool> causes this operator to return a reference to a temporary
   [[nodiscard]] T& operator[](std::size_t i, std::size_t j) noexcept { return elements[i][j]; }
   [[nodiscard]] const T& operator[](std::size_t i, std::size_t j) const noexcept { return elements[i][j]; }
+  // Vector indexing assumes y == i and x == j
+  [[nodiscard]] T& operator[](const Vector<int>& v) noexcept { return elements[static_cast<unsigned>(v.y)][static_cast<unsigned>(v.x)]; }
+  [[nodiscard]] const T& operator[](const Vector<int>& v) const noexcept { return elements[static_cast<unsigned>(v.y)][static_cast<unsigned>(v.x)]; }
+
   /*
    * bounds checked indexing, returns optional copy
    * needs to take a signed integer to bounds check negative values

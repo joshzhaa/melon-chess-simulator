@@ -44,7 +44,7 @@ public:
    */
   [[nodiscard]] auto matrix(
     MatrixType type,  // flag to enable a capture for each geometry
-    Place place
+    const Place& place
   ) const noexcept -> math::Matrix<byte>;
 };
 

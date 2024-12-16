@@ -29,8 +29,10 @@ class Game {                                // NOLINT(*-padded)
   std::optional<math::Vector<int>> select;  // null -> no selection ("select mode")
   byte teams{};                             // number of teams in this game
 
-  void handle_select(math::Vector<int> square);  // TODO: refactor touch to use helpers
-  void handle_move(math::Vector<int> square);
+  // helpers for this->touch()
+  void handle_select(const math::Vector<int>& square);  // TODO: refactor touch to use helpers
+  void handle_move(const math::Vector<int>& square);
+  void trigger_effects(const math::Vector<int>& from, const math::Vector<int>& to);
 
 public:
   // Constructs Game at initial state of standard chess game
@@ -54,10 +56,7 @@ public:
    * touch if Mode::SELECT -> marks this->mask with possible moves for board[this->select] to take
    * touch if Mode::MOVE -> moves piece at this->select if marked in this->mask, resets to Mode::SELECT
    */
-  void touch(math::Vector<int> square) noexcept;
-
-  // touch a series of squares
-  void play(const std::vector<math::Vector<int>>& inputs) noexcept;
+  void touch(const math::Vector<int>& square) noexcept;
 };
 
 }  // namespace melon

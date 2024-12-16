@@ -1,6 +1,8 @@
 #include "melon/game.hpp"
 
+#include <algorithm>
 #include <array>
+#include <cassert>
 #include <cstddef>
 #include <optional>
 #include <utility>
@@ -10,6 +12,7 @@
 #include "melon/math/matrix.hpp"
 #include "melon/math/vector.hpp"
 #include "melon/piece.hpp"
+#include "melon/traits.hpp"
 
 // parallel arrays describing default chess board configuration
 // these arrays imply an orientation for x y axes
@@ -63,45 +66,87 @@ Game::Game() noexcept : mask{{N, N}}, teams{2} {
   boards.push_back(std::move(board));
 }
 
-void Game::touch(math::Vector<int> square) noexcept {
+void Game::handle_select(const math::Vector<int>& square) {
+  const auto piece = board().at(square.y, square.x);
+  assert(piece);
+  const Piece::Place place{.xy = square, .board = &board(), .move_history = &move_history()};
+  const auto move_matrix = piece->matrix(Piece::MatrixType::MOVE, place);
+  const auto attack_matrix = piece->matrix(Piece::MatrixType::ATTACK, place);
+  const auto [m, n] = board().shape();
+  for (std::size_t i = 0; i < m; ++i) {
+    for (std::size_t j = 0; j < n; ++j) {
+      bool occupied_by_enemy = board()[i, j].id() != 0 and board()[i, j].team() != piece->team();
+      mask[i, j] = occupied_by_enemy ? attack_matrix[i, j] : move_matrix[i, j];
+    }
+  }
+  select = square;
+}
+
+void Game::handle_move(const math::Vector<int>& square) {
+  if (  // if square has been flagged as being able to be moved to
+    auto is_flagged = mask.at(square.y, square.x);
+    is_flagged and static_cast<bool>(*is_flagged)
+  ) {
+    board()[square] = board()[*select];
+    board()[*select].destruct();
+    // this if checks whether the mask value represents a valid melon::Action value
+    if (mask[square] != 0 and mask[square] != 1) trigger_effects(*select, square);
+    board()[square].move();
+    moves.emplace_back(*select, square);
+  }
+  select = std::nullopt;
+}
+
+// helper for trigger_effects
+static void handle_castle(math::Matrix<Piece>& board, const math::Vector<int>& from, const math::Vector<int>& to) {
+  const auto displacement = to - from;
+  const math::Vector<int> direction = {displacement.x / 2, displacement.y / 2}; // unit vector
+  auto find_rook = [&board, &from, &direction](){
+    auto square = from;
+    auto piece = board.at(square.y, square.x);
+    while (piece) {
+      const auto& effects = Traits::db()[piece->id()].effects;
+      if (std::ranges::contains(effects, Effect::CASTLE)) return square;
+      square = square + direction;
+      piece = board.at(square.y, square.x);
+    }
+    return math::Vector{-1, -1};
+  };
+  const auto rook_square = find_rook();
+  assert((rook_square != math::Vector{-1, -1}));
+  // TODO: its unclear to me whether an auto-moved rook should be considered "moved"
+  board[to - direction] = board[rook_square];
+  board[rook_square].destruct();
+}
+
+void Game::trigger_effects(const math::Vector<int>& from, const math::Vector<int>& to) {
+  // some actions will always trigger an effect
+  switch (static_cast<Action>(mask[to])) {
+    case Action::EN_PASSANT:
+      board()[to - Team::db()[board()[to].team()].facing].destruct();
+      break;
+    case Action::CASTLE:
+      handle_castle(board(), from, to);
+      break;
+    case Action::DOUBLE_STEP:
+      break;  // double step doesn't trigger any effects
+  }
+}
+
+void Game::touch(const math::Vector<int>& square) noexcept {
   auto piece = board().at(square.y, square.x);
   if (not piece) {
     select = std::nullopt;
     return;
   }
-  if (mode() == Mode::SELECT) {
-    auto move_matrix = piece->matrix(Piece::MatrixType::MOVE, {.xy = square, .board = &board(), .move_history = &move_history()});
-    auto attack_matrix = piece->matrix(Piece::MatrixType::ATTACK, {.xy = square, .board = &board(), .move_history = &move_history()});
-    auto [m, n] = board().shape();
-    for (std::size_t i = 0; i < m; ++i) {
-      for (std::size_t j = 0; j < n; ++j) {
-        bool const can_move = static_cast<bool>(move_matrix[i, j]);
-        bool const can_attack = static_cast<bool>(attack_matrix[i, j])  // due to vector<bool> limitations
-          and board()[i, j].id() != 0                                   // non-empty
-          and board()[i, j].team() != piece->team();                    // non-ally
-        mask[i, j] = static_cast<byte>(can_move or can_attack);
-      }
-    }
-    select = square;
-  } else {  // mode() == Mode::MOVE
-    if (  // if square has been flagged as being able to be moved to
-      auto is_flagged = mask.at(square.y, square.x);
-      is_flagged and static_cast<bool>(*is_flagged)
-    ) {
-      math::Vector<std::size_t> const from{.x = static_cast<std::size_t>(select->x), .y = static_cast<std::size_t>(select->y)};
-      math::Vector<std::size_t> const to{.x = static_cast<std::size_t>(square.x), .y = static_cast<std::size_t>(square.y)};
-      board()[to.y, to.x] = board()[from.y, from.x];  // TODO: move if Piece becomes non-trivial
-      board()[from.y, from.x].destruct();
-      // TODO: trigger effects
-      board()[to.y, to.x].move();
-      moves.emplace_back(*select, square);
-    }
-    select = std::nullopt;
+  switch (mode()) {
+    case Mode::SELECT:
+      handle_select(square);
+      break;
+    case Mode::MOVE:
+      handle_move(square);
+      break;
   }
-}
-
-void Game::play(const std::vector<math::Vector<int>>& inputs) noexcept {
-  for (const math::Vector<int>& input : inputs) touch(input);
 }
 
 }  // namespace melon

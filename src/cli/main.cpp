@@ -1,12 +1,12 @@
 #include <format>
 #include <fstream>
-#include <ios>
 #include <iostream>
 #include <vector>
 
 #include "melon/cli/text_io.hpp"
 #include "melon/game.hpp"
 #include "melon/math/vector.hpp"
+#include "melon/traits.hpp"
 
 using namespace melon;
 
@@ -54,7 +54,7 @@ static void console_game(std::ostream& os, std::istream& is) {
 }
 
 int main() {
-  // std::ifstream file{"ep-input.txt"};
-  // interactive_game(std::cout,  file);
-  console_game(std::cout, std::cin);
+  std::ifstream file{"castle.input"};
+  console_game(std::cout,  file);
+  // console_game(std::cout, std::cin);
 }
