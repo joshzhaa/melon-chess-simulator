@@ -67,15 +67,15 @@ Game::Game() noexcept : mask{{N, N}}, teams{2} {
 }
 
 void Game::handle_select(const math::Vector<int>& square) {
-  const auto piece = board().at(square.y, square.x);
-  assert(piece);
+  const auto piece = board().at(square);
+  if (not piece or piece->empty()) return;
   const Piece::Place place{.xy = square, .board = &board(), .move_history = &move_history()};
   const auto move_matrix = piece->matrix(Piece::MatrixType::MOVE, place);
   const auto attack_matrix = piece->matrix(Piece::MatrixType::ATTACK, place);
   const auto [m, n] = board().shape();
   for (std::size_t i = 0; i < m; ++i) {
     for (std::size_t j = 0; j < n; ++j) {
-      bool occupied_by_enemy = board()[i, j].id() != 0 and board()[i, j].team() != piece->team();
+      const bool occupied_by_enemy = board()[i, j].id() != 0 and board()[i, j].team() != piece->team();
       mask[i, j] = occupied_by_enemy ? attack_matrix[i, j] : move_matrix[i, j];
     }
   }
@@ -83,8 +83,9 @@ void Game::handle_select(const math::Vector<int>& square) {
 }
 
 void Game::handle_move(const math::Vector<int>& square) {
+  assert(select);
   if (  // if square has been flagged as being able to be moved to
-    auto is_flagged = mask.at(square.y, square.x);
+    const auto is_flagged = mask.at(square);
     is_flagged and static_cast<bool>(*is_flagged)
   ) {
     board()[square] = board()[*select];
@@ -97,20 +98,33 @@ void Game::handle_move(const math::Vector<int>& square) {
   select = std::nullopt;
 }
 
+void Game::touch(const math::Vector<int>& square) noexcept {
+  switch (mode()) {
+    case Mode::SELECT:
+      handle_select(square);
+      break;
+    case Mode::MOVE:
+      handle_move(square);
+      break;
+  }
+}
+
+namespace {
+
 // helper for trigger_effects
-static void handle_castle(math::Matrix<Piece>& board, const math::Vector<int>& from, const math::Vector<int>& to) {
+void handle_castle(math::Matrix<Piece>& board, const math::Vector<int>& from, const math::Vector<int>& to) {
   const auto displacement = to - from;
-  const math::Vector<int> direction = {displacement.x / 2, displacement.y / 2}; // unit vector
-  auto find_rook = [&board, &from, &direction](){
+  const math::Vector<int> direction = {.x=displacement.x / 2, .y=displacement.y / 2};  // unit vector
+  auto find_rook = [&board, &from, &direction]() {
     auto square = from;
-    auto piece = board.at(square.y, square.x);
+    auto piece = board.at(square);
     while (piece) {
       const auto& effects = Traits::db()[piece->id()].effects;
       if (std::ranges::contains(effects, Effect::CASTLE)) return square;
       square = square + direction;
-      piece = board.at(square.y, square.x);
+      piece = board.at(square);
     }
-    return math::Vector{-1, -1};
+    return math::Vector{.x=-1, .y=-1};
   };
   const auto rook_square = find_rook();
   assert((rook_square != math::Vector{-1, -1}));
@@ -119,7 +133,10 @@ static void handle_castle(math::Matrix<Piece>& board, const math::Vector<int>& f
   board[rook_square].destruct();
 }
 
+} // namespace
+
 void Game::trigger_effects(const math::Vector<int>& from, const math::Vector<int>& to) {
+  assert(mask[to] != 0 and mask[to] != 1);
   // some actions will always trigger an effect
   switch (static_cast<Action>(mask[to])) {
     case Action::EN_PASSANT:
@@ -133,20 +150,5 @@ void Game::trigger_effects(const math::Vector<int>& from, const math::Vector<int
   }
 }
 
-void Game::touch(const math::Vector<int>& square) noexcept {
-  auto piece = board().at(square.y, square.x);
-  if (not piece) {
-    select = std::nullopt;
-    return;
-  }
-  switch (mode()) {
-    case Mode::SELECT:
-      handle_select(square);
-      break;
-    case Mode::MOVE:
-      handle_move(square);
-      break;
-  }
-}
 
 }  // namespace melon

@@ -6,7 +6,6 @@
 #include "melon/cli/text_io.hpp"
 #include "melon/game.hpp"
 #include "melon/math/vector.hpp"
-#include "melon/traits.hpp"
 
 using namespace melon;
 
@@ -32,7 +31,9 @@ struct LoudObject{
 };
 // NOLINTEND(*-named-parameter, readability-convert-member-functions-to-static)
 
-static void console_game(std::ostream& os, std::istream& is) {
+namespace {
+
+void console_game(std::ostream& os, std::istream& is) {
   Game game;
   int x = 0;
   int y = 0;
@@ -52,6 +53,8 @@ static void console_game(std::ostream& os, std::istream& is) {
   }
   os << text_io::serialize(game.board(), false) << '\n';
 }
+
+} // namespace
 
 int main() {
   std::ifstream file{"castle.input"};

@@ -17,7 +17,7 @@ using namespace melon;
 
 // @@@ Core Piece Logic @@@
 [[nodiscard]] inline byte& mask_at(math::Matrix<byte>& mask, const math::Vector<int>& pos) noexcept {
-  assert(mask.at(pos.y, pos.x));  // programmer must bounds check this function
+  assert(mask.at(pos));  // programmer must bounds check this function
   auto xu = static_cast<std::size_t>(pos.x);
   auto yu = static_cast<std::size_t>(pos.y);
   return mask[yu, xu];
@@ -69,7 +69,7 @@ void rotate(math::Vector<int>& v, const math::Vector<int>& facing) noexcept {
 void mark_point(math::Vector<int>& square, math::Matrix<byte>& mask, const math::Vector<int>& orientation, const Piece::Place& place) noexcept {
   square += orientation;
   if (  // if piece at square is empty (id == 0)
-    auto piece = place.board->at(square.y, square.x);
+    auto piece = place.board->at(square);
     piece and piece->id() == 0
   ) {
     mask_at(mask, square) = True;
@@ -82,14 +82,14 @@ void mark_ray(math::Vector<int>& square, math::Matrix<byte>& mask, const math::V
   do {
     mask_at(mask, square) = True;
     square += orientation;
-    piece = place.board->at(square.y, square.x);
+    piece = place.board->at(square);
   } while (piece and piece->id() == 0);
   mask_at(mask, place.xy) = False;  // noop moves are not legal
 }
 
 inline void attack(const math::Vector<int>& square, math::Matrix<byte>& mask, byte team, const Piece::Place& place) noexcept {
   if (  // if can capture, mark one more square in the right direction
-    auto piece = place.board->at(square.y, square.x);
+    auto piece = place.board->at(square);
     piece and piece->team() != team
   ) {
     mask_at(mask, square) = True;
@@ -101,7 +101,7 @@ void en_passant(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::P
   if (type == Piece::MatrixType::ATTACK) return;
   const auto& board = *place.board;
   const auto& move_history = *place.move_history;
-  const auto pawn = board.at(place.xy.y, place.xy.x);
+  const auto pawn = board.at(place.xy);
 
   auto up = facing(pawn->team());
   auto left = up;
@@ -110,7 +110,7 @@ void en_passant(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::P
   rotate(right, {.x = 1, .y = 0});
 
   auto recent_double_step = [&board, &move_history](const math::Vector<int>& pos) {
-    auto piece = board.at(pos.y, pos.x);
+    auto piece = board.at(pos);
     if (not piece) return false;
     const auto& effects = Traits::db()[piece->id()].effects;
     // if has en_passant effect, then it's a "pawn"
@@ -137,18 +137,18 @@ void castle(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place
   // its difficult because en passant has a really complicated condition
   if (type == Piece::MatrixType::ATTACK) return;
   const auto& board = *place.board;
-  const auto king = board.at(place.xy.y, place.xy.x);
+  const auto king = board.at(place.xy);
   assert(king);
   if (king->moved()) return;
   auto find_rook = [&board, &place](const math::Vector<int>& offset) -> std::optional<math::Vector<int>> {
     math::Vector<int> origin = place.xy;  // copy
-    auto piece = board.at(origin.y, origin.x);
+    auto piece = board.at(origin);
     while (piece) {
       const auto& effects = Traits::db()[piece->id()].effects;
       // if piece has the CASTLE effect (i.e. is a rook)
       if (std::ranges::contains(effects, Effect::CASTLE)) return origin;
       origin += offset;
-      piece = board.at(origin.y, origin.x);
+      piece = board.at(origin);
     }
     return std::nullopt;
   };
@@ -161,11 +161,11 @@ void castle(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place
   auto right_rook = find_rook(right);
 
   auto mask_if_castle = [&mask, &board, &place](const math::Vector<int>& rook_pos, const math::Vector<int>& offset) {
-    auto rook = board.at(rook_pos.y, rook_pos.x);
+    auto rook = board.at(rook_pos);
     assert(rook);
     if (rook->moved()) return;
     const math::Vector<int> two_spaces = place.xy + offset + offset;
-    const auto target = board.at(two_spaces.y, two_spaces.x);
+    const auto target = board.at(two_spaces);
     if (not target or not target->empty()) return;
     mask_at(mask, two_spaces) = static_cast<byte>(Action::CASTLE);
   };
@@ -176,20 +176,20 @@ void castle(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place
 void double_step(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place) noexcept {
   if (type == Piece::MatrixType::ATTACK) return;
   const auto& board = *place.board;
-  const auto pawn = board.at(place.xy.y, place.xy.x);
+  const auto pawn = board.at(place.xy);
   assert(pawn);
   if (pawn->moved()) return;
   // if both squares ahead are empty then double move is possible
-  math::Vector<int> const one_ahead = place.xy + facing(pawn->team());
-  if (auto piece = board.at(one_ahead.y, one_ahead.x); not piece or not piece->empty()) return;
-  math::Vector<int> const two_ahead = one_ahead + facing(pawn->team());
-  if (auto piece = board.at(two_ahead.y, two_ahead.x); not piece or not piece->empty()) return;
+  const math::Vector<int> one_ahead = place.xy + facing(pawn->team());
+  if (auto piece = board.at(one_ahead); not piece or not piece->empty()) return;
+  const math::Vector<int> two_ahead = one_ahead + facing(pawn->team());
+  if (auto piece = board.at(two_ahead); not piece or not piece->empty()) return;
   // preconditions for double move are guaranteed satisfied
   mask_at(mask, two_ahead) = static_cast<byte>(Action::DOUBLE_STEP);
 }
 
 void exec_actions(math::Matrix<byte>& mask, Piece::MatrixType type, const Piece::Place& place) noexcept {
-  const auto& piece = place.board->at(place.xy.y, place.xy.x);
+  const auto& piece = place.board->at(place.xy);
   assert(piece);
   for (const auto& action : Traits::db()[piece->id()].actions) {
     switch (action) {

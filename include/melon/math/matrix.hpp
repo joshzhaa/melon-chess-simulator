@@ -74,14 +74,14 @@ public:
    * bounds checked indexing, returns optional copy
    * needs to take a signed integer to bounds check negative values
    */
-  [[nodiscard]] std::optional<T> at(int i, int j) const noexcept {
-    if (i < 0 or j < 0) return std::nullopt;
+  [[nodiscard]] std::optional<T> at(const Vector<int> v) const noexcept {
+    if (v.x < 0 or v.y < 0) return std::nullopt;
     // x and y are now guaranteed nonnegative
     auto [m, n] = shape();
-    auto iu = static_cast<std::size_t>(i);
-    auto ju = static_cast<std::size_t>(j);
-    if (iu >= n or ju >= m) return std::nullopt;
-    return (*this)[iu, ju];
+    auto x = static_cast<std::size_t>(v.x);
+    auto y = static_cast<std::size_t>(v.y);
+    if (x >= n or y >= m) return std::nullopt;
+    return (*this)[y, x];
   }
 
   /*
