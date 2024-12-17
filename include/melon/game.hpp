@@ -20,7 +20,8 @@ using Move = std::tuple<math::Vector<int>, math::Vector<int>>;
  * for user interaction, there are 2 modes: "select" and "move"
  * first the user selects a piece to move, then chooses a square to move to
  *
- * invariant: boards.size() > 0
+ * invariant: boards.size() > 0, boards.size() == moves.size()
+ * game only modifies boards.back() (after pushing a copy of previous board)
  */
 class Game {                                // NOLINT(*-padded)
   std::vector<math::Matrix<Piece>> boards;  // history of board states
@@ -30,7 +31,7 @@ class Game {                                // NOLINT(*-padded)
   byte teams{};                             // number of teams in this game
 
   // helpers for this->touch()
-  void handle_select(const math::Vector<int>& square);  // TODO: refactor touch to use helpers
+  void handle_select(const math::Vector<int>& square);
   void handle_move(const math::Vector<int>& square);
   void trigger_effects(const math::Vector<int>& from, const math::Vector<int>& to);
 
@@ -47,8 +48,9 @@ public:
   enum class Mode : byte { SELECT, MOVE };
   // SELECT -> expecting a piece selection, MOVE -> expecting a move selection
   [[nodiscard]] Mode mode() const noexcept { return select ? Mode::MOVE : Mode::SELECT; }
-  [[nodiscard]] std::size_t ply_count() const noexcept { return boards.size(); }
-  [[nodiscard]] byte turn() const noexcept { return 1 + ((ply_count() - 1) % teams); }
+  [[nodiscard]] std::size_t ply() const noexcept { return boards.size(); }
+  // 1, 2, 3, ..., teams, 1, 2, 3, ...
+  [[nodiscard]] byte turn() const noexcept { return 1 + ((ply() - 1) % teams); }
 
   /*
    * interact with a square

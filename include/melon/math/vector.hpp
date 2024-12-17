@@ -1,6 +1,5 @@
 /*
- * Defines Scalar concept and Vector struct supporting the usual matrix algebra
- * operations
+ * Defines Scalar concept and Vector struct supporting the usual operations
  */
 #ifndef MELON_MATH_VECTOR_HPP_
 #define MELON_MATH_VECTOR_HPP_

@@ -31,8 +31,8 @@ public:
   // clang-format on
 
   Matrix() = default;
-  Matrix(const Matrix& other) = delete;
-  Matrix& operator=(const Matrix& other) = delete;
+  Matrix(const Matrix& other) = default;
+  Matrix& operator=(const Matrix& other) = default;
   Matrix(Matrix&& other) = default;
   Matrix& operator=(Matrix&& other) = default;
   ~Matrix() = default;

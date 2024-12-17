@@ -40,6 +40,8 @@ void console_game(std::ostream& os, std::istream& is) {
   os << text_io::serialize(game.board(), true) << '\n';
   std::vector<math::Vector<int>> inputs;
   while (is >> x >> y) {
+    os << "ply: " << game.ply() << '\n';
+    os << "turn: " << static_cast<int>(game.turn()) << '\n';
     inputs.emplace_back(x, y);
     game.touch({.x=x, .y=y});
     if (game.mode() == Game::Mode::SELECT) {
@@ -57,7 +59,7 @@ void console_game(std::ostream& os, std::istream& is) {
 } // namespace
 
 int main() {
-  std::ifstream file{"castle.input"};
-  console_game(std::cout,  file);
-  // console_game(std::cout, std::cin);
+  // std::ifstream file{"castle.input"};
+  // console_game(std::cout,  file);
+  console_game(std::cout, std::cin);
 }

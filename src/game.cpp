@@ -68,7 +68,8 @@ Game::Game() noexcept : mask{{N, N}}, teams{2} {
 
 void Game::handle_select(const math::Vector<int>& square) {
   const auto piece = board().at(square);
-  if (not piece or piece->empty()) return;
+  // TODO: maybe support a real time chess option (replace team check with empty check)
+  if (not piece or piece->team() != this->turn()) return;
   const Piece::Place place{.xy = square, .board = &board(), .move_history = &move_history()};
   const auto move_matrix = piece->matrix(Piece::MatrixType::MOVE, place);
   const auto attack_matrix = piece->matrix(Piece::MatrixType::ATTACK, place);
@@ -88,6 +89,9 @@ void Game::handle_move(const math::Vector<int>& square) {
     const auto is_flagged = mask.at(square);
     is_flagged and static_cast<bool>(*is_flagged)
   ) {
+    // when the if condition is satisfied, the move is guaranteed to succeed
+    // store previous board state before modifying
+    boards.push_back(board());
     board()[square] = board()[*select];
     board()[*select].destruct();
     // this if checks whether the mask value represents a valid melon::Action value
@@ -124,13 +128,44 @@ void handle_castle(math::Matrix<Piece>& board, const math::Vector<int>& from, co
       square = square + direction;
       piece = board.at(square);
     }
-    return math::Vector{.x=-1, .y=-1};
+    assert(false);  // not found -> programmer error in Piece::matrix
   };
   const auto rook_square = find_rook();
-  assert((rook_square != math::Vector{-1, -1}));
   // TODO: its unclear to me whether an auto-moved rook should be considered "moved"
   board[to - direction] = board[rook_square];
   board[rook_square].destruct();
+}
+
+/*
+  * Matrix of squares that are considered "threatened" for a certain team.
+  * These are squares that team's king couldn't legally move to.
+  * fairly expensive operation, O(m*n) calls to Piece::matrix.
+  * What's worse is that it needs to be called once for each possible move
+  */
+auto threat_matrix(const math::Matrix<Piece>& board, byte team) -> math::Matrix<byte> {
+  auto [m, n] = board.shape();
+  math::Matrix<byte> result{{m, n}, False};
+  // adds more squares to threat matrix (result)
+  auto add_squares = [&result, &m, &n](const math::Matrix<byte>& matrix){
+    for (std::size_t i = 0; i < m; ++i) {
+      for (std::size_t j = 0; j < n; ++j) {
+        result[i, j] = result[i, j] or matrix[i, j];  // NOLINT(*implicit-bool-conversion)
+      }
+    }
+  };
+  for (std::size_t i = 0; i < m; ++i) {
+    for (std::size_t j = 0; j < n; ++j) {
+      const auto& piece = board[i, j];
+      if (piece.team() == team) continue;
+      const Piece::Place place{
+        {static_cast<int>(j), static_cast<int>(i)},
+        &board, nullptr,  // move_history only needed by en_passant (=MatrixType::MOVE)
+      };
+      const auto attacks = piece.matrix(Piece::MatrixType::ATTACK, place);
+      add_squares(attacks);
+    }
+  }
+  return result;
 }
 
 } // namespace
@@ -149,6 +184,5 @@ void Game::trigger_effects(const math::Vector<int>& from, const math::Vector<int
       break;  // double step doesn't trigger any effects
   }
 }
-
 
 }  // namespace melon
